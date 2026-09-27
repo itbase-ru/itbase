@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+<defs>
+<linearGradient id="tt" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#071812"/><stop offset="1" stop-color="#0f2e20"/>
+</linearGradient>
+</defs>
+<rect width="1200" height="675" fill="url(#tt)"/>
+<g stroke="#4ade80" stroke-width="6" stroke-linecap="round" fill="none">
+<path d="M 200 260 L 280 340 L 420 180"/>
+</g>
+<g stroke="#4ade80" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.7">
+<path d="M 200 500 L 280 580 L 420 420"/>
+</g>
+<g stroke="#8a95a6" stroke-width="4" stroke-linecap="round" fill="none">
+<path d="M 550 260 L 750 260"/>
+<path d="M 550 320 L 900 320"/>
+<path d="M 550 380 L 850 380"/>
+<path d="M 550 440 L 920 440"/>
+<path d="M 550 500 L 700 500"/>
+</g>
+<g fill="#4ade80" font-family="monospace" font-size="22">
+<text x="550" y="600">PASS ✓</text>
+</g>
+<text x="60" y="120" fill="#e9eef5" font-family="Georgia, serif" font-size="72" font-weight="700">Unit Tests</text>
+<text x="60" y="170" fill="#4ade80" font-family="monospace" font-size="18" letter-spacing="4">// ЗАЧЕМ ПИСАТЬ ТЕСТЫ</text>
+</svg>
