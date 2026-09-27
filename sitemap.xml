@@ -141,5 +141,24 @@
     <lastmod>2026-03-15</lastmod>
     <priority>0.8</priority>
   </url>
+    <url>
+    <loc>https://itbase-ru.github.io/article.html?a=modulnye-testy-zachem-nuzhny</loc>
+    <lastmod>2026-03-17</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://itbase-ru.github.io/article.html?a=kak-rabotaet-brauzer</loc>
+    <lastmod>2026-03-19</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://itbase-ru.github.io/article.html?a=regulyarnye-vyrazheniya-na-praktike</loc>
+    <lastmod>2026-03-21</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
 
 </urlset>
