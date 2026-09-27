@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="60" y="100" width="200" height="200" rx="20" fill="#12161d" stroke="#222a36" stroke-width="2"/>
+  <text x="160" y="230" text-anchor="middle" font-family="monospace" font-size="64" font-weight="bold" fill="#8a95a6">Py</text>
+  <rect x="300" y="100" width="200" height="200" rx="20" fill="#12161d" stroke="#ffb454" stroke-width="3"/>
+  <text x="400" y="230" text-anchor="middle" font-family="monospace" font-size="64" font-weight="bold" fill="#ffb454">JS</text>
+  <rect x="540" y="100" width="200" height="200" rx="20" fill="#12161d" stroke="#222a36" stroke-width="2"/>
+  <text x="640" y="230" text-anchor="middle" font-family="monospace" font-size="64" font-weight="bold" fill="#8a95a6">Go</text>
+  <text x="400" y="360" text-anchor="middle" font-family="sans-serif" font-size="22" fill="#8a95a6">Что выбрать первым?</text>
+</svg>
