@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+<defs>
+<linearGradient id="j" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#141005"/><stop offset="1" stop-color="#2a2210"/>
+</linearGradient>
+</defs>
+<rect width="1200" height="675" fill="url(#j)"/>
+<rect x="880" y="150" width="200" height="200" rx="24" fill="#f7df1e"/>
+<text x="980" y="290" text-anchor="middle" fill="#141005" font-family="Georgia, serif" font-size="130" font-weight="700">JS</text>
+<text x="60" y="280" fill="#e9eef5" font-family="Georgia, serif" font-size="72" font-weight="700">JavaScript</text>
+<text x="60" y="340" fill="#8a95a6" font-family="monospace" font-size="22">let age = 25;</text>
+<text x="60" y="380" fill="#8a95a6" font-family="monospace" font-size="22">const name = "Аня";</text>
+<text x="60" y="420" fill="#ffb454" font-family="monospace" font-size="22">console.log(name, age);</text>
+<text x="60" y="560" fill="#8a95a6" font-family="monospace" font-size="16" letter-spacing="4">// ТИПЫ И ПЕРЕМЕННЫЕ</text>
+</svg>

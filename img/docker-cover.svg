@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+<defs>
+<linearGradient id="dk" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#051525"/><stop offset="1" stop-color="#0d2844"/>
+</linearGradient>
+</defs>
+<rect width="1200" height="675" fill="url(#dk)"/>
+<g fill="#2496ed">
+<!-- Контейнеры-коробки -->
+<rect x="380" y="280" width="90" height="60" rx="6"/>
+<rect x="490" y="280" width="90" height="60" rx="6"/>
+<rect x="600" y="280" width="90" height="60" rx="6"/>
+<rect x="380" y="200" width="90" height="60" rx="6"/>
+<rect x="490" y="200" width="90" height="60" rx="6"/>
+<rect x="490" y="120" width="90" height="60" rx="6"/>
+<rect x="600" y="200" width="90" height="60" rx="6"/>
+<rect x="710" y="280" width="90" height="60" rx="6"/>
+<!-- Кит-основа -->
+<path d="M 320 360 Q 320 420 400 420 L 800 420 Q 880 420 880 360 Z"/>
+</g>
+<text x="60" y="600" fill="#e9eef5" font-family="Georgia, serif" font-size="72" font-weight="700">Docker</text>
+<text x="60" y="640" fill="#2496ed" font-family="monospace" font-size="16" letter-spacing="4">// КОНТЕЙНЕРЫ</text>
+</svg>

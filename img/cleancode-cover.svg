@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+<defs>
+<linearGradient id="cc" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#070f0a"/><stop offset="1" stop-color="#12281a"/>
+</linearGradient>
+</defs>
+<rect width="1200" height="675" fill="url(#cc)"/>
+<g fill="#4ade80" opacity="0.9">
+<text x="140" y="200" font-family="monospace" font-size="42">function add(a, b) {</text>
+<text x="200" y="260" font-family="monospace" font-size="42" opacity="0.85">return a + b;</text>
+<text x="140" y="320" font-family="monospace" font-size="42">}</text>
+</g>
+<g fill="#e06c75" opacity="0.5">
+<text x="700" y="200" font-family="monospace" font-size="36" text-decoration="line-through">var a, b;</text>
+<text x="700" y="260" font-family="monospace" font-size="36" text-decoration="line-through">if (a) { for(...) { while(...) } }</text>
+<text x="700" y="320" font-family="monospace" font-size="36" text-decoration="line-through">x = x + 1;</text>
+</g>
+<text x="60" y="500" fill="#e9eef5" font-family="Georgia, serif" font-size="72" font-weight="700">Clean Code</text>
+<text x="60" y="560" fill="#4ade80" font-family="monospace" font-size="16" letter-spacing="4">// DRY · KISS · YAGNI</text>
+</svg>
