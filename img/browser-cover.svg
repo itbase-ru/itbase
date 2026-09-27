@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675">
+<defs>
+<linearGradient id="bb" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#080c18"/><stop offset="1" stop-color="#182740"/>
+</linearGradient>
+</defs>
+<rect width="1200" height="675" fill="url(#bb)"/>
+<!-- Окно браузера -->
+<rect x="150" y="120" width="900" height="500" rx="14" fill="#12161d" stroke="#222a36" stroke-width="2"/>
+<rect x="150" y="120" width="900" height="40" rx="14" fill="#1a2028"/>
+<g fill="#3a3f48">
+<circle cx="185" cy="140" r="7"/><circle cx="210" cy="140" r="7"/><circle cx="235" cy="140" r="7"/>
+</g>
+<!-- Дерево DOM -->
+<g stroke="#ffb454" stroke-width="3" fill="none">
+<line x1="380" y1="240" x2="300" y2="330"/>
+<line x1="380" y1="240" x2="460" y2="330"/>
+<line x1="300" y1="390" x2="240" y2="480"/>
+<line x1="300" y1="390" x2="360" y2="480"/>
+</g>
+<g fill="#ffb454">
+<circle cx="380" cy="230" r="18"/>
+<circle cx="300" cy="360" r="16"/>
+<circle cx="460" cy="360" r="16"/>
+<circle cx="240" cy="510" r="14"/>
+<circle cx="360" cy="510" r="14"/>
+</g>
+<g fill="#8a95a6" font-family="monospace" font-size="18">
+<text x="600" y="240">&lt;body&gt;</text>
+<text x="600" y="290">&lt;h1&gt;</text>
+<text x="600" y="340">&lt;p&gt;</text>
+<text x="600" y="400">&lt;strong&gt;</text>
+<text x="600" y="460">&lt;span&gt;</text>
+</g>
+<text x="60" y="610" fill="#e9eef5" font-family="Georgia, serif" font-size="52" font-weight="700">Как работает браузер</text>
+<text x="750" y="650" fill="#ffb454" font-family="monospace" font-size="16" letter-spacing="4">// DOM · RENDER · PAINT</text>
+</svg>
