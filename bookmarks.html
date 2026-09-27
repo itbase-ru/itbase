@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Мои закладки — IT·База</title>
+  <meta name="description" content="Сохранённые статьи IT·База. Хранятся в браузере, можно экспортировать в файл.">
+  <script>
+    (function(){
+      try{
+        var t = localStorage.getItem('itbase_theme');
+        if (t) document.documentElement.setAttribute('data-theme', t);
+      }catch(e){}
+    })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo">IT<span>·</span>База</a>
+      <button class="theme-toggle" id="themeToggle" title="Сменить тему" aria-label="Сменить тему">☾</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <h1>Мои закладки</h1>
+      <p>Сохраняются в этом браузере. Если почистишь историю — экспортни сначала в файл.</p>
+      <div class="bm-toolbar">
+        <button id="bmExport">↓ Экспорт в файл</button>
+        <button id="bmImport">↑ Импорт из файла</button>
+        <button id="bmClear" class="danger">Очистить всё</button>
+        <input type="file" id="bmFile" accept=".json" hidden>
+      </div>
+    </section>
+
+    <div class="wrap"><div class="grid" id="grid"></div></div>
+  </main>
+
+  <footer class="site-footer">
+  <div class="site-footer__inner">
+    <span>© <span id="year"></span> IT·База</span>
+    <a href="about.html">О сайте</a>
+    <a href="contacts.html">Контакты</a>
+    <a href="privacy.html">Политика</a>
+    <a href="terms.html">Условия</a>
+    <a href="bookmarks.html" style="margin-left:auto;color:var(--accent)">★ Закладки</a>
+  </div>
+</footer>
+
+  <script src="data/articles.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

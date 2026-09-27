@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /bookmarks.html
+Disallow: /404.html
+
+# Когда появится домен — раскомментируй:
+# Sitemap: https://твой-домен/sitemap.xml

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IT·База — статьи про ИИ, код и технологии</title>
+  <meta name="description" content="Понятные статьи про искусственный интеллект, программирование и IT. Разборы с нуля, примеры кода, таблицы и практика.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="IT·База — понятно про ИИ и код">
+  <meta property="og:description" content="Разборы с нуля, примеры кода, никакой воды.">
+  <meta property="og:image" content="img/ai-cover.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <script>
+    (function(){
+      try{
+        var t = localStorage.getItem('itbase_theme');
+        if (t) document.documentElement.setAttribute('data-theme', t);
+      }catch(e){}
+    })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo">IT<span>·</span>База</a>
+      <div class="header-search">
+        <input type="search" id="search" placeholder="Поиск по статьям…" autocomplete="off">
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Сменить тему" aria-label="Сменить тему">☾</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <h1>Разбираемся в IT по-человечески</h1>
+      <p>ИИ, код, инструменты — без воды и заумных терминов. С примерами, таблицами и объяснением «почему так».</p>
+    </section>
+
+    <div class="wrap"><div class="ad-slot ad-slot--inline" id="ad-top"></div></div>
+
+    <div class="wrap">
+      <div class="chips" id="chips"></div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+  <div class="site-footer__inner">
+    <span>© <span id="year"></span> IT·База</span>
+    <a href="about.html">О сайте</a>
+    <a href="contacts.html">Контакты</a>
+    <a href="privacy.html">Политика</a>
+    <a href="terms.html">Условия</a>
+    <a href="bookmarks.html" style="margin-left:auto;color:var(--accent)">★ Закладки</a>
+  </div>
+</footer>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js" data-manual></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+  <script src="data/articles.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

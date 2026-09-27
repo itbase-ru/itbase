@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Контакты — IT·База</title>
+  <meta name="description" content="Как связаться с автором IT·База: почта, вопросы, предложения, сотрудничество.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <script>
+    (function(){
+      try{
+        var t = localStorage.getItem('itbase_theme');
+        if (t) document.documentElement.setAttribute('data-theme', t);
+      }catch(e){}
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo">IT<span>·</span>База</a>
+      <button class="theme-toggle" id="themeToggle" title="Сменить тему" aria-label="Сменить тему">☾</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <h1>Контакты</h1>
+      <p>Есть вопрос, нашёл ошибку, хочешь предложить тему или сотрудничать? Пиши.</p>
+    </section>
+
+    <div class="wrap">
+      <div class="legal">
+
+        <div class="contact-card">
+          <div class="contact-card__icon">✉</div>
+          <div class="contact-card__body">
+            <div class="contact-card__label">Электронная почта</div>
+            <a class="contact-card__value" href="mailto:kirillfomichev05@mail.ru">kirillfomichev05@mail.ru</a>
+          </div>
+        </div>
+
+        <h2>По каким вопросам писать</h2>
+        <ul>
+          <li><strong>Нашёл ошибку в статье.</strong> Опиши, что не так, укажи адрес страницы — исправлю.</li>
+          <li><strong>Предложить тему.</strong> Расскажи, что хотел бы увидеть на сайте.</li>
+          <li><strong>Сотрудничество.</strong> Реклама, партнёрство, гостевые материалы — обсуждаемо.</li>
+          <li><strong>Юридические вопросы.</strong> Авторские права, жалобы на контент.</li>
+        </ul>
+
+        <h2>Как отвечаю</h2>
+        <p>Обычно в течение <strong>2–3 рабочих дней</strong>. Если письмо содержит конкретику (ссылка, скриншот, суть вопроса) — отвечу быстрее. Письма без темы и в стиле «привет, хочу денег» игнорирую.</p>
+
+        <h2>Чего не будет</h2>
+        <ul>
+          <li>Размещения ссылок за оплату без пометки «реклама».</li>
+          <li>Написания статей под диктовку заказчика без реальной пользы для читателя.</li>
+          <li>Публикации чужих статей под видом моих.</li>
+        </ul>
+
+        <p style="margin-top:40px">
+          <a href="index.html">← Вернуться на главную</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <span>© <span id="year"></span> IT·База</span>
+      <a href="about.html">О сайте</a>
+      <a href="privacy.html">Политика</a>
+      <a href="terms.html">Условия</a>
+    </div>
+  </footer>
+
+  <script src="data/articles.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

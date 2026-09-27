@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Страница не найдена — IT·База</title>
+  <meta name="robots" content="noindex">
+  <script>
+    (function(){
+      try{
+        var t = localStorage.getItem('itbase_theme');
+        if (t) document.documentElement.setAttribute('data-theme', t);
+      }catch(e){}
+    })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="logo">IT<span>·</span>База</a>
+      <button class="theme-toggle" id="themeToggle" title="Сменить тему" aria-label="Сменить тему">☾</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="page-404">
+        <div class="page-404__code">404</div>
+        <h1>Такой страницы нет</h1>
+        <p>Возможно, ты опечатался в адресе или страница была удалена. Держи пару статей — они точно на месте.</p>
+        <a class="page-404__btn" href="index.html">← На главную</a>
+      </div>
+
+      <div class="grid" id="grid404" style="padding-bottom:80px"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+  <div class="site-footer__inner">
+    <span>© <span id="year"></span> IT·База</span>
+    <a href="about.html">О сайте</a>
+    <a href="contacts.html">Контакты</a>
+    <a href="privacy.html">Политика</a>
+    <a href="terms.html">Условия</a>
+    <a href="bookmarks.html" style="margin-left:auto;color:var(--accent)">★ Закладки</a>
+  </div>
+</footer>
+
+  <script src="data/articles.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
