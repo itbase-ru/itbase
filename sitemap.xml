@@ -3,141 +3,141 @@
 
   <!-- Служебные страницы -->
   <url>
-    <loc>https://kirill06092005.github.io/itbase/</loc>
+    <loc>https://itbase-ru.github.io/itbase/</loc>
     <lastmod>2026-03-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/about.html</loc>
+    <loc>https://itbase-ru.github.io/itbase/about.html</loc>
     <lastmod>2026-03-15</lastmod>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/contacts.html</loc>
+    <loc>https://itbase-ru.github.io/itbase/contacts.html</loc>
     <lastmod>2026-03-15</lastmod>
     <priority>0.4</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/privacy.html</loc>
+    <loc>https://itbase-ru.github.io/itbase/privacy.html</loc>
     <lastmod>2026-03-15</lastmod>
     <priority>0.3</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/terms.html</loc>
+    <loc>https://itbase-ru.github.io/itbase/terms.html</loc>
     <lastmod>2026-03-15</lastmod>
     <priority>0.3</priority>
   </url>
 
   <!-- Статьи -->
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=chto-takoe-iskusstvennyy-intellekt</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=chto-takoe-iskusstvennyy-intellekt</loc>
     <lastmod>2026-02-10</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=git-dlya-novichkov</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=git-dlya-novichkov</loc>
     <lastmod>2026-02-05</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=kak-uchitsya-programmirovaniyu-s-nulya</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=kak-uchitsya-programmirovaniyu-s-nulya</loc>
     <lastmod>2026-02-14</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=chto-takoe-api</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=chto-takoe-api</loc>
     <lastmod>2026-02-16</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=terminal-dlya-novichka</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=terminal-dlya-novichka</loc>
     <lastmod>2026-02-18</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=html-s-nulya</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=html-s-nulya</loc>
     <lastmod>2026-02-20</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=css-flexbox-vs-grid</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=css-flexbox-vs-grid</loc>
     <lastmod>2026-02-22</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=javascript-peremennye-i-tipy</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=javascript-peremennye-i-tipy</loc>
     <lastmod>2026-02-24</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=sql-vs-nosql</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=sql-vs-nosql</loc>
     <lastmod>2026-02-26</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=kak-rabotaet-https</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=kak-rabotaet-https</loc>
     <lastmod>2026-02-28</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=docker-za-10-minut</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=docker-za-10-minut</loc>
     <lastmod>2026-03-01</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=kak-rabotaet-poisk-v-google</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=kak-rabotaet-poisk-v-google</loc>
     <lastmod>2026-03-03</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=chto-takoe-oblako</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=chto-takoe-oblako</loc>
     <lastmod>2026-03-05</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=kak-pisat-chistyy-kod</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=kak-pisat-chistyy-kod</loc>
     <lastmod>2026-03-07</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=javascript-massivy-i-obekty</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=javascript-massivy-i-obekty</loc>
     <lastmod>2026-03-09</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=asinhronnost-v-javascript</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=asinhronnost-v-javascript</loc>
     <lastmod>2026-03-11</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=api-klyuch-kak-ne-slit</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=api-klyuch-kak-ne-slit</loc>
     <lastmod>2026-03-13</lastmod>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://kirill06092005.github.io/itbase/article.html?a=chto-takoe-neyroset-posloyam</loc>
+    <loc>https://itbase-ru.github.io/itbase/article.html?a=chto-takoe-neyroset-posloyam</loc>
     <lastmod>2026-03-15</lastmod>
     <priority>0.8</priority>
   </url>
