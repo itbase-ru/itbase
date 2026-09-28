@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="120" y="80" width="200" height="110" rx="14" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="220" y="128" text-anchor="middle" font-family="monospace" font-size="22" fill="#ffb454" font-weight="bold">class</text>
+  <text x="220" y="160" text-anchor="middle" font-family="monospace" font-size="16" fill="#8a95a6">Animal</text>
+  <rect x="480" y="80" width="200" height="110" rx="14" fill="#12161d" stroke="#222a36" stroke-width="2"/>
+  <text x="580" y="128" text-anchor="middle" font-family="monospace" font-size="22" fill="#8a95a6" font-weight="bold">object</text>
+  <text x="580" y="160" text-anchor="middle" font-family="monospace" font-size="16" fill="#8a95a6">rex = Dog()</text>
+  <path d="M 320,135 Q 400,80 480,135" fill="none" stroke="#ffb454" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="400" y="105" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#8a95a6">чертёж → изделие</text>
+  <text x="400" y="250" text-anchor="middle" font-family="monospace" font-size="20" fill="#8a95a6">инкапсуляция · наследование</text>
+  <text x="400" y="285" text-anchor="middle" font-family="monospace" font-size="20" fill="#ffb454">полиморфизм · абстракция</text>
+  <text x="400" y="360" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#8a95a6" letter-spacing="4">OOP</text>
+</svg>
