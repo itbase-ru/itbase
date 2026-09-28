@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="120" y="180" width="140" height="90" rx="12" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="190" y="232" text-anchor="middle" font-family="monospace" font-size="20" fill="#8a95a6">you</text>
+  <rect x="540" y="180" width="140" height="90" rx="12" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="610" y="232" text-anchor="middle" font-family="monospace" font-size="20" fill="#ffb454">web</text>
+  <rect x="320" y="150" width="160" height="150" rx="20" fill="none" stroke="#ffb454" stroke-width="3" stroke-dasharray="10 6"/>
+  <text x="400" y="235" text-anchor="middle" font-family="monospace" font-size="26" fill="#ffb454" font-weight="bold">VPN</text>
+  <line x1="260" y1="225" x2="320" y2="225" stroke="#ffb454" stroke-width="3"/>
+  <line x1="480" y1="225" x2="540" y2="225" stroke="#ffb454" stroke-width="3"/>
+  <text x="400" y="360" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#8a95a6" letter-spacing="3">ENCRYPTED TUNNEL</text>
+</svg>
