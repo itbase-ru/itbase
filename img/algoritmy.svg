@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <circle cx="150" cy="90" r="24" fill="none" stroke="#ffb454" stroke-width="3"/>
+  <circle cx="400" cy="90" r="24" fill="none" stroke="#ffb454" stroke-width="3"/>
+  <circle cx="650" cy="90" r="24" fill="none" stroke="#ffb454" stroke-width="3"/>
+  <circle cx="275" cy="230" r="24" fill="none" stroke="#8a95a6" stroke-width="3"/>
+  <circle cx="525" cy="230" r="24" fill="none" stroke="#8a95a6" stroke-width="3"/>
+  <circle cx="400" cy="340" r="24" fill="none" stroke="#ffb454" stroke-width="3"/>
+  <line x1="170" y1="105" x2="260" y2="215" stroke="#222a36" stroke-width="2"/>
+  <line x1="420" y1="105" x2="290" y2="215" stroke="#222a36" stroke-width="2"/>
+  <line x1="390" y1="105" x2="515" y2="215" stroke="#222a36" stroke-width="2"/>
+  <line x1="630" y1="105" x2="540" y2="215" stroke="#222a36" stroke-width="2"/>
+  <line x1="290" y1="250" x2="385" y2="320" stroke="#222a36" stroke-width="2"/>
+  <line x1="510" y1="250" x2="415" y2="320" stroke="#222a36" stroke-width="2"/>
+  <text x="400" y="380" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6" letter-spacing="3">BIG O · TREE · GRAPH</text>
+</svg>
