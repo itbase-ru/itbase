@@ -4410,5 +4410,980 @@ def verify_token(token):
 
       <p>Если хочешь глубже про безопасность — посмотри <a href="article.html?a=kak-rabotaet-https">как работает HTTPS</a> и <a href="article.html?a=api-klyuch-kak-ne-slit">как не слить API-ключ</a>.</p>
     `
+  },
+   {
+    slug: "http-metody-i-status-kody",
+    title: "HTTP-методы и статус-коды — шпаргалка с примерами",
+    excerpt: "GET, POST, PUT, PATCH, DELETE и что значат все эти 200, 301, 404, 500. Разбираем HTTP по-человечески, с примерами запросов и ответов.",
+    cover: "img/http.svg",
+    tags: ["Веб", "API", "Теория"],
+    date: "2026-04-04",
+    readTime: 10,
+    content: `
+      <p>Каждый раз, когда ты открываешь сайт или приложение дёргает API, под капотом работает HTTP. Это протокол, на котором стоит весь современный веб. И у него есть свой язык — методы и статус-коды. Разберём их по-человечески.</p>
+
+      <h2>Что такое HTTP-запрос</h2>
+
+      <p>HTTP (HyperText Transfer Protocol) — протокол «запрос-ответ». Клиент отправляет запрос, сервер отвечает. Всё просто.</p>
+
+      <p>У запроса есть:</p>
+
+      <ul>
+        <li><strong>Метод</strong> — что клиент хочет сделать.</li>
+        <li><strong>URL</strong> — с чем именно.</li>
+        <li><strong>Заголовки</strong> — метаданные (кто, что принимает, какой формат).</li>
+        <li><strong>Тело</strong> — данные (у GET обычно нет, у POST/PUT/PATCH есть).</li>
+      </ul>
+
+      <p>У ответа есть:</p>
+
+      <ul>
+        <li><strong>Статус-код</strong> — что получилось (успех, ошибка, редирект).</li>
+        <li><strong>Заголовки</strong> — метаданные ответа.</li>
+        <li><strong>Тело</strong> — данные (HTML, JSON, картинка).</li>
+      </ul>
+
+      <h2>HTTP-методы</h2>
+
+      <p>Метод говорит серверу, какое действие выполнить с ресурсом. Основных — пять.</p>
+
+      <h3>GET — получить данные</h3>
+
+      <p>Самый частый метод. Запрашивает данные, ничего не меняет. Браузер отправляет GET, когда ты открываешь страницу.</p>
+
+      <pre><code class="language-bash">GET /articles/42 HTTP/1.1
+Host: example.com
+Accept: application/json</code></pre>
+
+      <p>Особенности:</p>
+      <ul>
+        <li>Параметры идут в URL: <code>/articles?tag=python</code>.</li>
+        <li>Не имеет тела запроса.</li>
+        <li>Можно кэшировать, можно перезагружать страницу без побочных эффектов.</li>
+        <li>Не должен ничего менять — это правило.</li>
+      </ul>
+
+      <h3>POST — создать новый ресурс</h3>
+
+      <p>Используется для отправки данных на сервер: форма регистрации, новая статья, комментарий.</p>
+
+      <pre><code class="language-bash">POST /articles HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{
+  "title": "Новая статья",
+  "body": "Текст..."
+}</code></pre>
+
+      <p>Особенности:</p>
+      <ul>
+        <li>Данные идут в теле, а не в URL.</li>
+        <li>Повторный вызов обычно создаёт ещё один ресурс (не идемпотентен).</li>
+        <li>Не кэшируется браузером по умолчанию.</li>
+      </ul>
+
+      <h3>PUT — обновить ресурс целиком</h3>
+
+      <p>Заменяет ресурс полностью. Если чего-то в теле не передал — на сервере это поле исчезнет.</p>
+
+      <pre><code class="language-bash">PUT /articles/42 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Обновлённый заголовок",
+  "body": "Новый текст"
+}</code></pre>
+
+      <p><strong>Идемпотентен:</strong> вызов 10 раз подряд даст тот же результат, что один раз.</p>
+
+      <h3>PATCH — обновить часть ресурса</h3>
+
+      <p>Обновляет только переданные поля, остальное не трогает.</p>
+
+      <pre><code class="language-bash">PATCH /articles/42 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Только заголовок меняем"
+}</code></pre>
+
+      <p>Разница с PUT: PUT заменяет, PATCH дополняет.</p>
+
+      <h3>DELETE — удалить ресурс</h3>
+
+      <pre><code class="language-bash">DELETE /articles/42 HTTP/1.1</code></pre>
+
+      <p>Тоже идемпотентен: удалил — повторный вызов вернёт «не найдено», но состояние системы то же.</p>
+
+      <h3>Сводная таблица</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Метод</th><th>Что делает</th><th>Идемпотентен</th><th>Есть тело</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GET</td><td>Читает</td><td>Да</td><td>Нет</td></tr>
+          <tr><td>POST</td><td>Создаёт</td><td>Нет</td><td>Да</td></tr>
+          <tr><td>PUT</td><td>Заменяет целиком</td><td>Да</td><td>Да</td></tr>
+          <tr><td>PATCH</td><td>Обновляет часть</td><td>Не всегда</td><td>Да</td></tr>
+          <tr><td>DELETE</td><td>Удаляет</td><td>Да</td><td>Обычно нет</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Статус-коды: что сервер говорит в ответ</h2>
+
+      <p>Статус-код — это трёхзначное число. Первая цифра говорит о категории.</p>
+
+      <ul>
+        <li><strong>1xx</strong> — информационные (редко видишь).</li>
+        <li><strong>2xx</strong> — успех.</li>
+        <li><strong>3xx</strong> — редирект.</li>
+        <li><strong>4xx</strong> — ошибка на стороне клиента.</li>
+        <li><strong>5xx</strong> — ошибка на стороне сервера.</li>
+      </ul>
+
+      <h3>2xx — успех</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Код</th><th>Значение</th><th>Когда используется</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>200</td><td>OK</td><td>Стандартный успех</td></tr>
+          <tr><td>201</td><td>Created</td><td>Ресурс создан (после POST)</td></tr>
+          <tr><td>204</td><td>No Content</td><td>Успех, но тело пустое (часто после DELETE)</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>3xx — редиректы</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Код</th><th>Значение</th><th>Когда используется</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>301</td><td>Moved Permanently</td><td>Ресурс переехал навсегда</td></tr>
+          <tr><td>302</td><td>Found</td><td>Временный редирект</td></tr>
+          <tr><td>304</td><td>Not Modified</td><td>Кэш актуален, тело не передаётся</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p><code>301</code> и <code>302</code> используются при переезде сайта, <code>304</code> — для экономии трафика при кэшировании.</p>
+
+      <h3>4xx — ошибки клиента</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Код</th><th>Значение</th><th>Что значит на практике</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>400</td><td>Bad Request</td><td>Некорректный запрос (битый JSON, не те поля)</td></tr>
+          <tr><td>401</td><td>Unauthorized</td><td>Не залогинен или токен просрочен</td></tr>
+          <tr><td>403</td><td>Forbidden</td><td>Залогинен, но нет прав</td></tr>
+          <tr><td>404</td><td>Not Found</td><td>Ресурса не существует</td></tr>
+          <tr><td>405</td><td>Method Not Allowed</td><td>Такой метод здесь не поддерживается</td></tr>
+          <tr><td>429</td><td>Too Many Requests</td><td>Rate limit — слишком часто дёргаешь API</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Разница 401 vs 403: 401 — «я не знаю, кто ты», 403 — «я знаю, кто ты, но тебе нельзя».</p>
+
+      <h3>5xx — ошибки сервера</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Код</th><th>Значение</th><th>Что значит</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>500</td><td>Internal Server Error</td><td>Что-то упало в коде, конкретика в логах</td></tr>
+          <tr><td>502</td><td>Bad Gateway</td><td>Прокси не смог дозвониться до бэкенда</td></tr>
+          <tr><td>503</td><td>Service Unavailable</td><td>Сервис перегружен или на обслуживании</td></tr>
+          <tr><td>504</td><td>Gateway Timeout</td><td>Бэкенд не ответил за разумное время</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Если видишь 5xx — проблема на сервере, не твоя. Если 4xx — обычно твоя (или того, кто делает запрос).</p>
+
+      <h2>Как посмотреть запросы вживую</h2>
+
+      <p>В браузере открой DevTools (F12) → вкладка Network. Обнови страницу и увидишь все запросы:</p>
+
+      <ul>
+        <li>метод и URL;</li>
+        <li>статус-код;</li>
+        <li>заголовки запроса и ответа;</li>
+        <li>тело запроса и ответа;</li>
+        <li>время выполнения.</li>
+      </ul>
+
+      <p>Это лучший способ учиться HTTP — смотри, что реально происходит при загрузке сайта.</p>
+
+      <h2>Практический пример с curl</h2>
+
+      <p><code>curl</code> — консольная утилита для HTTP-запросов. Примеры:</p>
+
+      <pre><code class="language-bash"># GET-запрос к API и вывод ответа
+curl https://api.example.com/users
+
+# POST с JSON-телом и указанием Content-Type
+curl -X POST https://api.example.com/users \\
+     -H "Content-Type: application/json" \\
+     -d '{"name": "Кирилл"}'
+
+# Показать только заголовки ответа (удобно для проверки статус-кода)
+curl -I https://example.com
+
+# Отправить с авторизацией по Bearer-токену
+curl -H "Authorization: Bearer TOKEN" \\
+     https://api.example.com/profile</code></pre>
+
+      <h2>Итог</h2>
+
+      <p>HTTP — язык общения клиента и сервера. Метод говорит, что делать, статус-код — что получилось. Запомни пять методов и пять групп статусов — этого хватит на 90% задач. Если хочешь глубже — почитай про HTTPS и <a href="article.html?a=chto-takoe-rest-i-graphql">REST и GraphQL</a>.</p>
+    `
+  },
+  {
+    slug: "monolit-i-mikroservisy",
+    title: "Монолит и микросервисы — когда что выбирать",
+    excerpt: "Разбираем без хайпа: что такое монолит, микросервисы, зачем они нужны, какие проблемы решают и какие создают. Спойлер: микросервисы — не всегда лучше.",
+    cover: "img/mikroservisy.svg",
+    tags: ["Разработка", "Архитектура", "DevOps"],
+    date: "2026-04-05",
+    readTime: 11,
+    content: `
+      <p>«Мы переезжаем на микросервисы» — фраза, которую слышал каждый, кто работал в IT-компании. Звучит солидно, но не всегда означает улучшение. Разберёмся, что это и когда оно действительно оправдано.</p>
+
+      <h2>Монолит: как было раньше</h2>
+
+      <p>Монолит — это одно приложение, где всё вместе: пользователи, заказы, платежи, уведомления. Один код, одна база данных, один деплой.</p>
+
+      <p>Пример структуры:</p>
+
+      <pre><code class="language-bash">myapp/
+├── users/        # модуль пользователей
+├── orders/       # модуль заказов
+├── payments/     # модуль оплаты
+├── notifications/# модуль уведомлений
+└── main.py       # точка входа</code></pre>
+
+      <p>Всё запускается одной командой, деплоится одним пакетом, тестируется целиком.</p>
+
+      <h3>Плюсы монолита</h3>
+
+      <ul>
+        <li><strong>Простота.</strong> Один проект, один репозиторий, одна сборка.</li>
+        <li><strong>Локальная разработка.</strong> Склонировал — запустил — работает.</li>
+        <li><strong>Транзакции.</strong> Одна база — можно делать атомарные операции между любыми данными.</li>
+        <li><strong>Нет сетевых задержек.</strong> Функции вызываются напрямую, а не через HTTP.</li>
+        <li><strong>Легко отлаживать.</strong> Один стектрейс, один лог.</li>
+      </ul>
+
+      <h3>Минусы монолита</h3>
+
+      <ul>
+        <li><strong>Масштабируется целиком.</strong> Если нагрузка только на оплату — всё равно масштабируешь всё приложение.</li>
+        <li><strong>Один упал — всё упало.</strong> Ошибка в модуле уведомлений может положить весь сервис.</li>
+        <li><strong>Растёт и пухнет.</strong> Через 3 года кодовая база превращается в «большой шар грязи».</li>
+        <li><strong>Команды мешают друг другу.</strong> Все правят один код, релизы ждут друг друга.</li>
+        <li><strong>Долгий деплой.</strong> Собрать и задеплоить 500-тысячный монолит — не быстро.</li>
+      </ul>
+
+      <h2>Микросервисы: что это</h2>
+
+      <p>Микросервисы — это разбиение монолита на <strong>независимые сервисы</strong>. Каждый сервис:</p>
+
+      <ul>
+        <li>отвечает за свою бизнес-функцию (пользователи, заказы, оплата);</li>
+        <li>имеет свою базу данных;</li>
+        <li>деплоится отдельно;</li>
+        <li>общается с другими по сети (HTTP, gRPC, очереди).</li>
+      </ul>
+
+      <p>Та же структура, но разбитая:</p>
+
+      <pre><code class="language-bash">users-service/       → своя база users-db
+orders-service/      → своя база orders-db
+payments-service/    → своя база payments-db
+notifications-service/ → своя база notifications-db
+api-gateway/         → маршрутизация запросов</code></pre>
+
+      <p>Каждый сервис — отдельное приложение, отдельный репозиторий, отдельная команда.</p>
+
+      <h3>Плюсы микросервисов</h3>
+
+      <ul>
+        <li><strong>Независимый деплой.</strong> Обновление сервиса оплаты не требует пересборки всего.</li>
+        <li><strong>Масштабируется точечно.</strong> Большая нагрузка на поиск — масштабируем только поиск.</li>
+        <li><strong>Изоляция сбоев.</strong> Упал сервис уведомлений — остальное работает.</li>
+        <li><strong>Свобода технологий.</strong> Один сервис на Python, другой на Go, третий на Java.</li>
+        <li><strong>Команды автономны.</strong> Каждая команда владеет своим сервисом.</li>
+      </ul>
+
+      <h3>Минусы микросервисов</h3>
+
+      <ul>
+        <li><strong>Сложная инфраструктура.</strong> Нужны Docker, Kubernetes, service mesh, мониторинг, трейсинг.</li>
+        <li><strong>Сетевые задержки.</strong> Вызов по HTTP медленнее, чем вызов функции.</li>
+        <li><strong>Нет общих транзакций.</strong> Нельзя просто сделать «списать деньги и создать заказ» — нужны саги, компенсации.</li>
+        <li><strong>Сложная отладка.</strong> Один запрос идёт через 5 сервисов — поймай, где упало.</li>
+        <li><strong>Дублирование кода.</strong> Общие вещи (аутентификация, логирование) нужно настраивать в каждом.</li>
+      </ul>
+
+      <blockquote>Микросервисы не упрощают систему. Они переносят сложность из кода в инфраструктуру. Если у тебя и так всё просто — микросервисы сделают сложнее.</blockquote>
+
+      <h2>Сравнение</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Критерий</th><th>Монолит</th><th>Микросервисы</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Старт проекта</td><td>Быстро</td><td>Медленно</td></tr>
+          <tr><td>Разработка</td><td>Простая</td><td>Сложная</td></tr>
+          <tr><td>Деплой</td><td>Весь сразу</td><td>По сервису</td></tr>
+          <tr><td>Масштабирование</td><td>Целиком</td><td>По сервису</td></tr>
+          <tr><td>Отказоустойчивость</td><td>Низкая</td><td>Высокая</td></tr>
+          <tr><td>Отладка</td><td>Простая</td><td>Сложная</td></tr>
+          <tr><td>Размер команды</td><td>До 20–30 человек</td><td>От 30 человек</td></tr>
+          <tr><td>Инфраструктура</td><td>Минимум</td><td>Много</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Когда монолит лучше</h2>
+
+      <ul>
+        <li><strong>Стартап на ранней стадии.</strong> Не знаешь ещё, что приживётся, — гибкость важнее масштаба.</li>
+        <li><strong>Небольшая команда.</strong> 5 человек не могут обслуживать 10 сервисов.</li>
+        <li><strong>Нет задач по масштабированию.</strong> Если 1000 пользователей — монолит справится.</li>
+        <li><strong>Простая предметная область.</strong> Блог, лендинг, простое приложение.</li>
+      </ul>
+
+      <h2>Когда микросервисы оправданы</h2>
+
+      <ul>
+        <li><strong>Большие команды.</strong> 100+ разработчиков в одном монолите — гарантированный хаос.</li>
+        <li><strong>Разные нагрузки на разные части.</strong> Один сервис нужен каждому пользователю, другой — раз в час.</li>
+        <li><strong>Разные технологии под задачи.</strong> Мachine learning на Python, а API — на Go.</li>
+        <li><strong>Высокие требования к отказоустойчивости.</strong> Если падение одного модуля не должно ронять всё.</li>
+      </ul>
+
+      <h2>Промежуточный вариант: модульный монолит</h2>
+
+      <p>Есть золотая середина — <strong>модульный монолит</strong>. Это одно приложение, но внутри чётко разделённое на модули с понятными границами.</p>
+
+      <pre><code class="language-bash">myapp/
+├── users/          # модуль с чётким публичным API
+│   ├── api.py
+│   └── internal/
+├── orders/         # модули не лезут в internals друг друга
+│   ├── api.py
+│   └── internal/
+└── main.py         # собирает всё вместе</code></pre>
+
+      <p>Плюсы:</p>
+      <ul>
+        <li>Просто, как монолит.</li>
+        <li>Если завтра понадобится — любой модуль легко вынести в отдельный сервис.</li>
+        <li>Нет инфраструктурной боли.</li>
+      </ul>
+
+      <p>Многие опытные команды советуют начинать именно с этого. Модульный монолит даёт 90% преимуществ микросервисов без 90% их проблем.</p>
+
+      <blockquote>Начни с монолита. Если он станет проблемой — разбей. Но не начинай с микросервисов, потому что «это современно».</blockquote>
+
+      <h2>Что нужно, если всё-таки идёшь в микросервисы</h2>
+
+      <p>Минимальный набор:</p>
+
+      <ul>
+        <li><strong>Контейнеры.</strong> Docker для каждого сервиса.</li>
+        <li><strong>Оркестрация.</strong> Kubernetes или хотя бы Docker Compose для локалки.</li>
+        <li><strong>API Gateway.</strong> Единая точка входа для клиента.</li>
+        <li><strong>Service discovery.</strong> Сервисы должны находить друг друга по имени.</li>
+        <li><strong>Централизованные логи.</strong> ELK, Loki, что угодно.</li>
+        <li><strong>Трейсинг.</strong> Jaeger, OpenTelemetry — видеть путь запроса через сервисы.</li>
+        <li><strong>Мониторинг.</strong> Prometheus + Grafana.</li>
+        <li><strong>CI/CD для каждого сервиса.</strong> Автодеплой, автотесты.</li>
+      </ul>
+
+      <p>Без этого всего микросервисы превращаются в тыкву через месяц.</p>
+
+      <h2>Итог</h2>
+
+      <p>Монолит — простой и быстрый старт. Микросервисы — мощная штука, но только при больших командах и серьёзной инфраструктуре. Если ты один или у тебя небольшая команда — модульный монолит покроет все нужды. А про то, как выглядит деплой в таких системах, читай в статье <a href="article.html?a=chto-takoe-devops-ci-cd-deploy">про DevOps и CI/CD</a>.</p>
+    `
+  },
+  {
+    slug: "osnovy-linux-dlya-razrabotchika",
+    title: "Основы Linux для разработчика — базовые команды",
+    excerpt: "Что нужно знать про Linux, чтобы работать на сервере. Разбираем навигацию по файлам, права доступа, процессы, SSH и полезные команды с примерами.",
+    cover: "img/linux.svg",
+    tags: ["Инструменты", "DevOps", "Теория"],
+    date: "2026-04-06",
+    readTime: 11,
+    content: `
+      <p>Даже если ты пишешь только на Python под Windows, рано или поздно столкнёшься с Linux: сервер, CI/CD, Docker, Raspberry Pi. Без базовых команд в Linux — как без рук. Разберём минимальный набор.</p>
+
+      <h2>Почему Linux</h2>
+
+      <ul>
+        <li><strong>Серверы.</strong> 95% интернета работает на Linux.</li>
+        <li><strong>Docker.</strong> Контейнеры — это Linux-процессы.</li>
+        <li><strong>Облака.</strong> AWS, Google Cloud, Yandex Cloud — везде Linux по умолчанию.</li>
+        <li><strong>Разработка.</strong> Почти все инструменты удобнее на Linux.</li>
+      </ul>
+
+      <h2>Навигация по файлам</h2>
+
+      <p>Ты всегда находишься «где-то» в файловой системе. Основные команды:</p>
+
+      <pre><code class="language-bash"># Текущая директория (где я?)
+pwd
+
+# Содержимое текущей папки
+ls
+
+# Показать скрытые файлы и подробную информацию
+ls -la
+
+# Перейти в подпапку
+cd projects
+
+# Перейти в домашнюю директорию
+cd ~
+
+# Перейти на уровень выше
+cd ..
+
+# Перейти обратно, где был до этого
+cd -
+
+# Дерево папок (если установлена утилита tree)
+tree -L 2</code></pre>
+
+      <p>Файловая система Linux — одна иерархия, начинается с <code>/</code>. Важные папки:</p>
+
+      <ul>
+        <li><code>/home/user</code> — домашняя папка пользователя.</li>
+        <li><code>/etc</code> — конфиги системы.</li>
+        <li><code>/var/log</code> — логи.</li>
+        <li><code>/tmp</code> — временные файлы.</li>
+        <li><code>/usr/bin</code> — большинство программ.</li>
+      </ul>
+
+      <h2>Работа с файлами</h2>
+
+      <pre><code class="language-bash"># Создать пустой файл
+touch notes.txt
+
+# Создать папку
+mkdir myproject
+
+# Создать вложенные папки одной командой
+mkdir -p myproject/src/utils
+
+# Копировать файл
+cp notes.txt backup.txt
+
+# Копировать папку рекурсивно
+cp -r myproject myproject_backup
+
+# Переместить или переименовать
+mv notes.txt notes_old.txt
+
+# Удалить файл
+rm notes.txt
+
+# Удалить папку со всем содержимым (ОСТОРОЖНО)
+rm -rf myproject_backup</code></pre>
+
+      <blockquote>Команда rm -rf удаляет без подтверждения и без корзины. Одна опечатка — и ты попрощался с папкой навсегда. Особенно опасна комбинация rm -rf / или rm -rf *.</blockquote>
+
+      <h2>Чтение файлов</h2>
+
+      <pre><code class="language-bash"># Показать весь файл
+cat notes.txt
+
+# Показать файл с постраничной навигацией (q — выход)
+less /var/log/syslog
+
+# Показать первые 10 строк
+head notes.txt
+
+# Показать последние 10 строк
+tail notes.txt
+
+# Следить за файлом в реальном времени (Ctrl+C — выйти)
+tail -f /var/log/syslog</code></pre>
+
+      <p><code>tail -f</code> — незаменимая команда для просмотра логов работающего приложения.</p>
+
+      <h2>Поиск</h2>
+
+      <pre><code class="language-bash"># Найти файлы по имени
+find /home -name "*.py"
+
+# Найти и что-то сделать (например, удалить старые логи)
+find /var/log -name "*.log" -mtime +30 -delete
+
+# Искать текст внутри файлов в текущей папке
+grep "ERROR" app.log
+
+# Искать рекурсивно по всем файлам
+grep -r "TODO" ./src
+
+# Искать без учёта регистра
+grep -i "error" app.log
+
+# Показать номер строки в файле
+grep -n "main" app.py</code></pre>
+
+      <h2>Права доступа</h2>
+
+      <p>В Linux у каждого файла есть владелец и права. Смотреть:</p>
+
+      <pre><code class="language-bash">ls -l script.sh
+# -rwxr-xr-- 1 kirill users 512 Apr 6 12:00 script.sh</code></pre>
+
+      <p>Расшифровка прав <code>-rwxr-xr--</code>:</p>
+
+      <ul>
+        <li>Первый символ: <code>-</code> — файл, <code>d</code> — папка.</li>
+        <li>Далее три группы по 3 символа: <strong>владелец</strong>, <strong>группа</strong>, <strong>остальные</strong>.</li>
+        <li><code>r</code> — read (чтение), <code>w</code> — write (запись), <code>x</code> — execute (запуск).</li>
+      </ul>
+
+      <p>Сменить права:</p>
+
+      <pre><code class="language-bash"># Сделать скрипт исполняемым
+chmod +x script.sh
+
+# Права 755 — владелец всё, остальные читать и запускать
+chmod 755 script.sh
+
+# Сменить владельца файла (нужен sudo)
+sudo chown kirill:users script.sh</code></pre>
+
+      <h2>sudo — выполнение с правами администратора</h2>
+
+      <pre><code class="language-bash"># Обновить список пакетов (Ubuntu/Debian)
+sudo apt update
+
+# Установить программу
+sudo apt install nginx
+
+# Перезапустить сервис
+sudo systemctl restart nginx
+
+# Посмотреть статус сервиса
+sudo systemctl status nginx</code></pre>
+
+      <p><code>sudo</code> — «выполнить от имени root». Без него систему менять нельзя. Используй осторожно: под root можно случайно снести что угодно.</p>
+
+      <h2>Процессы</h2>
+
+      <pre><code class="language-bash"># Показать все процессы
+ps aux
+
+# Найти процесс по имени
+ps aux | grep python
+
+# Интерактивный просмотр процессов (q — выход)
+top
+
+# Более удобный вариант, если установлен
+htop
+
+# Убить процесс по PID
+kill 12345
+
+# Убить насильно, если не отвечает
+kill -9 12345
+
+# Убить по имени
+pkill -f bot.py</code></pre>
+
+      <p>Процессы живут, пока их кто-то не остановит или пока система не выключится. Хочешь, чтобы бот работал после отключения SSH — используй <code>screen</code>, <code>tmux</code> или <code>systemd</code>.</p>
+
+      <h2>Сеть</h2>
+
+      <pre><code class="language-bash"># Проверить, доступен ли хост
+ping google.com
+
+# Показать IP-адреса интерфейсов
+ip a
+
+# Скачать файл
+curl -O https://example.com/file.zip
+
+# Скачать с индикатором прогресса
+wget https://example.com/file.zip
+
+# Открыть SSH-сессию с сервером
+ssh user@192.168.1.10
+
+# Копировать файл с локальной машины на сервер
+scp ./bot.py user@192.168.1.10:/home/user/</code></pre>
+
+      <h2>Полезные мелочи</h2>
+
+      <pre><code class="language-bash"># История команд (стрелки вверх/вниз или Ctrl+R для поиска)
+history
+
+# Не прерывать команду при отключении SSH
+nohup python bot.py &
+
+# Создать архив
+tar -czvf backup.tar.gz myproject/
+
+# Распаковать архив
+tar -xzvf backup.tar.gz
+
+# Посмотреть, сколько места на диске
+df -h
+
+# Посмотреть, что занимает место в папке
+du -sh *
+
+# Выполнить несколько команд подряд
+cd /var/log && tail -f syslog</code></pre>
+
+      <h2>Что учить дальше</h2>
+
+      <ol>
+        <li><strong>bash-скрипты</strong> — автоматизировать рутину.</li>
+        <li><strong>systemd</strong> — держать сервис запущенным как демон.</li>
+        <li><strong>ssh-ключи</strong> — входить на сервер без пароля, безопаснее.</li>
+        <li><strong>vim или nano</strong> — редактировать файлы прямо на сервере.</li>
+        <li><strong>Пакетные менеджеры</strong> — apt, yum, pacman — в зависимости от дистрибутива.</li>
+      </ol>
+
+      <blockquote>Не пытайся выучить Linux по книжке. Подними виртуалку или возьми VPS за 200 ₽ и делай что-то реальное. Через месяц будешь чувствовать себя как дома.</blockquote>
+
+      <h2>Итог</h2>
+
+      <p>Для старта достаточно навигации, работы с файлами, прав, процессов и базовой сети. Это 90% задач, которые ты будешь делать на сервере ежедневно. Остальное придёт с практикой.</p>
+    `
+  },
+  {
+    slug: "sql-zaprosy-s-nulya",
+    title: "SQL-запросы с нуля — SELECT, WHERE, JOIN",
+    excerpt: "Разбираем SQL на практике: как выбрать данные, отфильтровать, отсортировать, соединить таблицы. С примерами на реальных задачах интернет-магазина.",
+    cover: "img/sql.svg",
+    tags: ["Базы данных", "SQL", "Разработка"],
+    date: "2026-04-07",
+    readTime: 12,
+    content: `
+      <p>SQL — язык, на котором разговаривают с базами данных. Он старше интернета и до сих пор незаменим. Если ты работаешь с данными — SQL обязателен. Разберём базовые запросы на понятных примерах.</p>
+
+      <p>Если ещё не читал <a href="article.html?a=sql-vs-nosql">SQL vs NoSQL</a> — начни с той статьи, там про виды баз в целом.</p>
+
+      <h2>Что такое SQL и зачем</h2>
+
+      <p>SQL (Structured Query Language) — язык для работы с реляционными базами данных. Ты пишешь запрос — база возвращает данные.</p>
+
+      <p>Примеры СУБД: PostgreSQL, MySQL, SQLite, MS SQL Server, Oracle. Синтаксис почти одинаковый, различия в деталях.</p>
+
+      <h2>Наша учебная база</h2>
+
+      <p>Представим интернет-магазин. Две таблицы:</p>
+
+      <p><strong>users</strong> — пользователи:</p>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>id</th><th>name</th><th>email</th><th>city</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Кирилл</td><td>kirill@mail.ru</td><td>Москва</td></tr>
+          <tr><td>2</td><td>Анна</td><td>anna@mail.ru</td><td>СПб</td></tr>
+          <tr><td>3</td><td>Иван</td><td>ivan@mail.ru</td><td>Москва</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p><strong>orders</strong> — заказы:</p>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>id</th><th>user_id</th><th>total</th><th>status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>10</td><td>1</td><td>5000</td><td>paid</td></tr>
+          <tr><td>11</td><td>1</td><td>1500</td><td>pending</td></tr>
+          <tr><td>12</td><td>2</td><td>8000</td><td>paid</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>SELECT — выбрать данные</h2>
+
+      <pre><code class="language-sql">-- Выбрать все колонки и все строки из таблицы users
+SELECT * FROM users;
+
+-- Выбрать только name и email
+SELECT name, email FROM users;
+
+-- Выбрать и переименовать колонку в ответе (AS)
+SELECT name AS имя, city AS город FROM users;</code></pre>
+
+      <p><code>*</code> — «все колонки». На продакшене лучше указывать явно, какие нужны — это быстрее и понятнее.</p>
+
+      <h2>WHERE — фильтрация</h2>
+
+      <pre><code class="language-sql">-- Найти пользователя по email
+SELECT * FROM users WHERE email = 'kirill@mail.ru';
+
+-- Все пользователи из Москвы
+SELECT * FROM users WHERE city = 'Москва';
+
+-- Заказы на сумму больше 2000
+SELECT * FROM orders WHERE total > 2000;
+
+-- Заказы пользователя с id 1 со статусом paid
+SELECT * FROM orders
+WHERE user_id = 1 AND status = 'paid';</code></pre>
+
+      <p>Операторы: <code>=</code>, <code>!=</code> или <code>&lt;&gt;</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>AND</code>, <code>OR</code>, <code>NOT</code>.</p>
+
+      <h3>IN, BETWEEN, LIKE</h3>
+
+      <pre><code class="language-sql">-- Пользователи из Москвы или СПб (IN — список значений)
+SELECT * FROM users WHERE city IN ('Москва', 'СПб');
+
+-- Заказы от 1000 до 5000 (BETWEEN — включительно с двух сторон)
+SELECT * FROM orders WHERE total BETWEEN 1000 AND 5000;
+
+-- Email, содержащий "mail" (LIKE с процентами — подстановка)
+SELECT * FROM users WHERE email LIKE '%mail%';
+
+-- Email, начинающийся с "kirill"
+SELECT * FROM users WHERE email LIKE 'kirill%';</code></pre>
+
+      <p>Символ <code>%</code> в LIKE — «любые символы». <code>_</code> — «ровно один символ».</p>
+
+      <h3>IS NULL — работа с пустыми значениями</h3>
+
+      <pre><code class="language-sql">-- Пользователи, у которых не указан город
+SELECT * FROM users WHERE city IS NULL;
+
+-- Пользователи, у которых город указан
+SELECT * FROM users WHERE city IS NOT NULL;</code></pre>
+
+      <p>Важно: <code>= NULL</code> не работает. Только <code>IS NULL</code> или <code>IS NOT NULL</code>.</p>
+
+      <h2>ORDER BY — сортировка</h2>
+
+      <pre><code class="language-sql">-- Пользователи по алфавиту
+SELECT * FROM users ORDER BY name;
+
+-- Заказы по убыванию суммы (DESC — descending)
+SELECT * FROM orders ORDER BY total DESC;
+
+-- Сначала по городу, потом по имени
+SELECT * FROM users ORDER BY city, name;</code></pre>
+
+      <p>По умолчанию — по возрастанию (ASC). Для убывания — <code>DESC</code>.</p>
+
+      <h2>LIMIT — ограничить количество</h2>
+
+      <pre><code class="language-sql">-- Только первые 10 заказов
+SELECT * FROM orders LIMIT 10;
+
+-- Топ-3 самых дорогих заказа
+SELECT * FROM orders ORDER BY total DESC LIMIT 3;
+
+-- Пропустить первые 20 и взять следующие 10 (пагинация)
+SELECT * FROM orders LIMIT 10 OFFSET 20;</code></pre>
+
+      <p><code>LIMIT + OFFSET</code> — основа пагинации на сайте.</p>
+
+      <h2>Агрегатные функции</h2>
+
+      <p>Считают что-то по группе строк.</p>
+
+      <pre><code class="language-sql">-- Общее количество пользователей
+SELECT COUNT(*) FROM users;
+
+-- Сумма всех заказов
+SELECT SUM(total) FROM orders;
+
+-- Средний чек
+SELECT AVG(total) FROM orders;
+
+-- Минимум и максимум
+SELECT MIN(total), MAX(total) FROM orders;</code></pre>
+
+      <h2>GROUP BY — группировка</h2>
+
+      <pre><code class="language-sql">-- Сколько заказов у каждого пользователя
+SELECT user_id, COUNT(*) AS order_count
+FROM orders
+GROUP BY user_id;
+
+-- Общая сумма заказов по пользователям
+SELECT user_id, SUM(total) AS total_spent
+FROM orders
+GROUP BY user_id
+ORDER BY total_spent DESC;</code></pre>
+
+      <p>Правило: в SELECT могут быть только те колонки, по которым группируешь, или агрегатные функции.</p>
+
+      <h3>HAVING — фильтр после группировки</h3>
+
+      <pre><code class="language-sql">-- Пользователи, сделавшие больше 1 заказа
+SELECT user_id, COUNT(*) AS order_count
+FROM orders
+GROUP BY user_id
+HAVING COUNT(*) > 1;</code></pre>
+
+      <p>WHERE фильтрует <em>до</em> группировки, HAVING — <em>после</em>.</p>
+
+      <h2>JOIN — соединение таблиц</h2>
+
+      <p>Самая важная часть SQL. Позволяет связать данные из разных таблиц.</p>
+
+      <h3>INNER JOIN — только совпадения</h3>
+
+      <pre><code class="language-sql">-- Все заказы с именами пользователей
+SELECT u.name, o.total, o.status
+FROM orders o
+INNER JOIN users u ON u.id = o.user_id;</code></pre>
+
+      <p>Что происходит:</p>
+      <ul>
+        <li>Берём таблицу <code>orders</code>, обозначаем её как <code>o</code>.</li>
+        <li>Присоединяем <code>users</code> как <code>u</code>.</li>
+        <li>Связываем по <code>u.id = o.user_id</code>.</li>
+        <li>Оставляем только строки, где есть пара.</li>
+      </ul>
+
+      <p>Если у заказа не найдётся пользователь — такой заказ в результат не попадёт.</p>
+
+      <h3>LEFT JOIN — все строки слева</h3>
+
+      <pre><code class="language-sql">-- Все пользователи и их заказы (если заказов нет — NULL)
+SELECT u.name, o.id AS order_id, o.total
+FROM users u
+LEFT JOIN orders o ON o.user_id = u.id;</code></pre>
+
+      <p>LEFT JOIN оставляет всех пользователей, даже тех, у кого нет заказов. У таких строк поля заказа будут <code>NULL</code>.</p>
+
+      <h3>Сравнение JOIN'ов</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Тип</th><th>Что оставляет</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>INNER JOIN</td><td>Только строки с совпадением в обеих таблицах</td></tr>
+          <tr><td>LEFT JOIN</td><td>Все строки из левой таблицы + совпадения из правой</td></tr>
+          <tr><td>RIGHT JOIN</td><td>Все строки из правой + совпадения из левой</td></tr>
+          <tr><td>FULL OUTER JOIN</td><td>Все строки из обеих таблиц</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>INSERT, UPDATE, DELETE — изменение данных</h2>
+
+      <h3>INSERT — добавить</h3>
+
+      <pre><code class="language-sql">-- Добавить одного пользователя
+INSERT INTO users (name, email, city)
+VALUES ('Олег', 'oleg@mail.ru', 'Казань');
+
+-- Добавить сразу несколько
+INSERT INTO users (name, email, city) VALUES
+  ('Мария', 'maria@mail.ru', 'СПб'),
+  ('Пётр', 'petr@mail.ru', 'Москва');</code></pre>
+
+      <h3>UPDATE — обновить</h3>
+
+      <pre><code class="language-sql">-- Обновить статус конкретного заказа
+UPDATE orders
+SET status = 'shipped'
+WHERE id = 11;
+
+-- Поднять всем заказчикам из Москвы скидку (всем строкам, подходящим под WHERE)
+UPDATE users
+SET city = 'Москва'
+WHERE email LIKE '%@mail.ru';</code></pre>
+
+      <blockquote>Забыл WHERE в UPDATE — обновил все строки таблицы. Забыл WHERE в DELETE — снёс всю таблицу. Всегда проверяй WHERE перед запуском.</blockquote>
+
+      <h3>DELETE — удалить</h3>
+
+      <pre><code class="language-sql">-- Удалить конкретного пользователя
+DELETE FROM users WHERE id = 3;
+
+-- Удалить все отменённые заказы
+DELETE FROM orders WHERE status = 'cancelled';</code></pre>
+
+      <h2>Порядок частей запроса</h2>
+
+      <p>Запрос всегда пишется в таком порядке:</p>
+
+      <pre><code class="language-sql">SELECT   -- 1. что выбрать
+FROM     -- 2. откуда
+JOIN     -- 3. с чем соединить
+WHERE    -- 4. фильтр строк
+GROUP BY -- 5. группировка
+HAVING   -- 6. фильтр групп
+ORDER BY -- 7. сортировка
+LIMIT    -- 8. сколько вернуть</code></pre>
+
+      <p>Но выполняется он в другом порядке — планировщик базы решает сам. Для понимания достаточно запомнить, что WHERE до GROUP BY, а HAVING после.</p>
+
+      <h2>Комплексный пример</h2>
+
+      <p>Задача: найти всех пользователей из Москвы, у которых суммарная стоимость оплаченных заказов больше 3000, и вывести их имена и суммы.</p>
+
+      <pre><code class="language-sql">SELECT
+  u.name,                       -- имя пользователя
+  SUM(o.total) AS total_spent   -- суммарная сумма заказов
+FROM users u
+INNER JOIN orders o
+  ON u.id = o.user_id           -- связываем заказы с пользователями
+WHERE
+  u.city = 'Москва'             -- только из Москвы
+  AND o.status = 'paid'         -- только оплаченные
+GROUP BY
+  u.id, u.name                  -- группируем по пользователю
+HAVING
+  SUM(o.total) > 3000           -- фильтруем группы по сумме
+ORDER BY
+  total_spent DESC;             -- самые крупные сверху</code></pre>
+
+      <p>Вот это уже настоящий «боевой» запрос. Такие ты будешь писать в реальной работе.</p>
+
+      <h2>Как практиковаться</h2>
+
+      <ul>
+        <li><strong>SQLite</strong> — встроена в Python, не нужно ничего ставить.</li>
+        <li><strong>PostgreSQL в Docker</strong> — одна команда, и у тебя сервер базы.</li>
+        <li><strong>Онлайн-тренажёры</strong> — sql-ex.ru, sqlbolt.com, LeetCode Database.</li>
+        <li><strong>Реальные данные</strong> — выгрузи CSV в SQLite и попробуй посчитать что-то полезное.</li>
+      </ul>
+
+      <h2>Итог</h2>
+
+      <p>SQL — простой, но глубокий язык. Начать можно за день: SELECT, WHERE, ORDER BY. За неделю — JOIN и GROUP BY. Дальше — практика на реальных задачах. В 90% случаев больше и не нужно.</p>
+    `
   }
 ];
