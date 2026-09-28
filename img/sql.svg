@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="80" y="90" width="280" height="200" rx="12" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="220" y="125" text-anchor="middle" font-family="monospace" font-size="18" fill="#8a95a6">users</text>
+  <line x1="100" y1="140" x2="340" y2="140" stroke="#222a36" stroke-width="1"/>
+  <text x="100" y="170" font-family="monospace" font-size="14" fill="#e9eef5">1  Кирилл  Москва</text>
+  <text x="100" y="200" font-family="monospace" font-size="14" fill="#e9eef5">2  Анна    СПб</text>
+  <text x="100" y="230" font-family="monospace" font-size="14" fill="#e9eef5">3  Иван    Москва</text>
+  <rect x="440" y="90" width="280" height="200" rx="12" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="580" y="125" text-anchor="middle" font-family="monospace" font-size="18" fill="#ffb454">orders</text>
+  <line x1="460" y1="140" x2="700" y2="140" stroke="#222a36" stroke-width="1"/>
+  <text x="460" y="170" font-family="monospace" font-size="14" fill="#e9eef5">10  u=1  5000</text>
+  <text x="460" y="200" font-family="monospace" font-size="14" fill="#e9eef5">11  u=1  1500</text>
+  <text x="460" y="230" font-family="monospace" font-size="14" fill="#e9eef5">12  u=2  8000</text>
+  <text x="400" y="350" text-anchor="middle" font-family="monospace" font-size="22" fill="#ffb454" font-weight="bold">SELECT · WHERE · JOIN</text>
+</svg>
