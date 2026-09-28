@@ -5386,4 +5386,889 @@ ORDER BY
       <p>SQL — простой, но глубокий язык. Начать можно за день: SELECT, WHERE, ORDER BY. За неделю — JOIN и GROUP BY. Дальше — практика на реальных задачах. В 90% случаев больше и не нужно.</p>
     `
   },
+     {
+    slug: "git-vetki-i-sliyanie",
+    title: "Git ветки и слияния — branch, merge, rebase",
+    excerpt: "Как работать с ветками в Git: создавать, переключаться, сливать, разрешать конфликты. Разбираем merge и rebase — когда что использовать.",
+    cover: "img/git-vetki.svg",
+    tags: ["Git", "Инструменты", "Разработка"],
+    date: "2026-04-08",
+    readTime: 11,
+    content: `
+      <p>Одна из главных фишек Git — ветки. Ты можешь работать над новой фичей, не ломая основную версию проекта. Если что-то пойдёт не так — просто удалишь ветку. Если получилось — сольёшь в основную.</p>
+
+      <p>Если ты ещё не знаешь базовых команд — начни со статьи <a href="article.html?a=git-dlya-novichkov">Git для новичков</a>. Здесь про ветки и слияния.</p>
+
+      <h2>Что такое ветка</h2>
+
+      <p>Ветка (branch) — это отдельная линия разработки. По умолчанию в репозитории есть одна ветка — обычно <code>main</code>. Но ты можешь создать сколько угодно дополнительных.</p>
+
+      <blockquote>Ветка — это просто указатель на коммит. Не копия файлов, не копия папки. Всего лишь метка. Поэтому создание ветки в Git — мгновенно.</blockquote>
+
+      <p>Схематично:</p>
+
+      <pre><code class="language-bash">main:    A --- B --- C --- D
+                    \\
+feature:             E --- F</code></pre>
+
+      <p>Тут мы от коммита B создали ветку <code>feature</code>, сделали два коммита E и F, а <code>main</code> в это время продолжал жить своей жизнью.</p>
+
+      <h2>Основные команды</h2>
+
+      <pre><code class="language-bash"># Посмотреть все ветки (текущая помечена звёздочкой)
+git branch
+
+# Создать новую ветку
+git branch feature-login
+
+# Переключиться на существующую ветку
+git checkout feature-login
+
+# Создать ветку и сразу переключиться (два в одном)
+git checkout -b feature-login
+
+# Современный синтаксис (то же самое, но нагляднее)
+git switch -c feature-login
+
+# Удалить ветку (если уже слита)
+git branch -d feature-login
+
+# Удалить ветку принудительно (если не слита)
+git branch -D feature-login</code></pre>
+
+      <p>Команда <code>git switch</code> появилась в Git 2.23 как замена <code>checkout</code> для переключения веток. Старый вариант тоже работает, но новый понятнее: <code>switch</code> — про ветки, <code>restore</code> — про файлы.</p>
+
+      <h2>Как происходит типичная работа</h2>
+
+      <p>Допустим, ты хочешь добавить форму логина на сайт. Делаешь так:</p>
+
+      <pre><code class="language-bash"># Убеждаемся, что мы на main и он актуален
+git checkout main
+git pull
+
+# Создаём ветку для новой фичи
+git switch -c feature-login
+
+# Работаем — пишем код, коммитим
+# ... несколько коммитов ...
+
+# Отправляем ветку на GitHub
+git push -u origin feature-login</code></pre>
+
+      <p>Флаг <code>-u</code> (upstream) связывает локальную ветку с удалённой — потом можно писать просто <code>git push</code> без указания имени.</p>
+
+      <p>Дальше на GitHub ты открываешь Pull Request — предложение слить изменения в main. Команда смотрит, обсуждает, комментирует. Если всё ок — мержит.</p>
+
+      <h2>Merge — слияние веток</h2>
+
+      <p>Когда работа в ветке закончена, её нужно влить в основную. Это делает команда <code>merge</code>.</p>
+
+      <pre><code class="language-bash"># Переключаемся на main
+git checkout main
+
+# Вливаем в него ветку feature-login
+git merge feature-login</code></pre>
+
+      <p>Что произойдёт — зависит от истории.</p>
+
+      <h3>Fast-forward merge</h3>
+
+      <p>Если <code>main</code> не менялся с момента создания ветки, Git просто «переставит» указатель main на последний коммит ветки:</p>
+
+      <pre><code class="language-bash">До:
+main:    A --- B
+                \\
+feature:         C --- D
+
+После:
+main:    A --- B --- C --- D</code></pre>
+
+      <p>Получается линейная история, и это красиво.</p>
+
+      <h3>Three-way merge</h3>
+
+      <p>Если <code>main</code> менялся параллельно, Git создаёт специальный <strong>merge-коммит</strong>, у которого два родителя:</p>
+
+      <pre><code class="language-bash">До:
+main:    A --- B --- E
+                \\
+feature:         C --- D
+
+После:
+main:    A --- B --- E --- M
+                \\         /
+feature:         C --- D</code></pre>
+
+      <p>Коммит M — это и есть merge-коммит. Он говорит: «здесь мы объединили две ветки».</p>
+
+      <h2>Конфликты и как их решать</h2>
+
+      <p>Если ты и коллега изменили одну и ту же строку в одном файле — Git не знает, кого выбрать. Это конфликт.</p>
+
+      <pre><code class="language-bash">git merge feature-login
+# CONFLICT (content): Merge conflict in src/login.js
+# Automatic merge failed; fix conflicts and then commit the result.</code></pre>
+
+      <p>В файле появятся маркеры:</p>
+
+      <pre><code class="language-javascript">function login() {
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+  return api.post('/auth/login');   // ← твой вариант (main)
+=======
+  return api.post('/auth/signin');  // ← вариант из ветки
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-login
+}</code></pre>
+
+      <p>Что делать:</p>
+
+      <ol>
+        <li>Открыть файл и вручную выбрать правильный вариант (или объединить оба).</li>
+        <li>Удалить маркеры <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>.</li>
+        <li>Сохранить файл.</li>
+        <li>Добавить его в индекс: <code>git add src/login.js</code>.</li>
+        <li>Завершить merge: <code>git commit</code>.</li>
+      </ol>
+
+      <p>Конфликт — не страшно. Это нормальная часть командной работы. Чем чаще мержишь ветки — тем меньше конфликтов.</p>
+
+      <h2>Rebase — альтернатива merge</h2>
+
+      <p>Rebase делает то же самое — переносит изменения из одной ветки в другую, — но по-другому. Вместо merge-коммита он «перебазирует» коммиты, создавая линейную историю.</p>
+
+      <pre><code class="language-bash"># Находясь на feature-login
+git rebase main</code></pre>
+
+      <p>Что происходит:</p>
+
+      <pre><code class="language-bash">До:
+main:    A --- B --- E
+                \\
+feature:         C --- D
+
+После:
+main:    A --- B --- E
+                      \\
+feature:               C' --- D'</code></pre>
+
+      <p>Коммиты C и D как бы «переиграны» поверх E. Получается линейная история без merge-коммита.</p>
+
+      <h3>Merge vs rebase</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Критерий</th><th>Merge</th><th>Rebase</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>История</td><td>Сохраняет как было</td><td>Переписывает</td></tr>
+          <tr><td>Merge-коммиты</td><td>Создаёт</td><td>Не создаёт</td></tr>
+          <tr><td>Читаемость</td><td>Ветвистая</td><td>Линейная</td></tr>
+          <tr><td>Безопасность</td><td>Всегда безопасно</td><td>Опасно на общих ветках</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <blockquote>Золотое правило: не делай rebase на ветках, которые уже кто-то скачал. Rebase переписывает историю — у коллег всё сломается. На своих локальных ветках — можно.</blockquote>
+
+      <h2>Типичные сценарии</h2>
+
+      <h3>Обновить свою ветку до последнего main</h3>
+
+      <pre><code class="language-bash"># Переключаемся на main, обновляемся
+git checkout main
+git pull
+
+# Возвращаемся в свою ветку
+git checkout feature-login
+
+# Вливаем в неё свежий main
+git merge main
+# или для чистой истории:
+# git rebase main</code></pre>
+
+      <h3>Отменить незаконченный merge</h3>
+
+      <pre><code class="language-bash">git merge --abort</code></pre>
+
+      <h3>Взять один коммит из другой ветки</h3>
+
+      <pre><code class="language-bash"># Хеш коммита можно посмотреть через git log
+git cherry-pick a1b2c3d</code></pre>
+
+      <h2>Что посмотреть</h2>
+
+      <pre><code class="language-bash"># История в виде графика со всеми ветками
+git log --oneline --graph --all
+
+# Что отличается в текущей ветке от main
+git diff main..HEAD
+
+# Список коммитов, которых нет в main
+git log main..HEAD --oneline</code></pre>
+
+      <p>Особенно полезен <code>git log --oneline --graph --all</code> — он рисует дерево коммитов в терминале. Сразу видно, где ветки разошлись и где слились.</p>
+
+      <h2>Итог</h2>
+
+      <p>Ветки — основа командной работы в Git. Создавай ветку под каждую фичу, работай в ней, потом сливай в main через merge или rebase. Конфликты — не страшно, их просто нужно решать руками. Главное правило: не делай rebase на чужих ветках.</p>
+    `
+  },
+  {
+    slug: "indeksy-v-bazah-dannyh",
+    title: "Индексы в базах данных — зачем и как работают",
+    excerpt: "Почему один и тот же SQL-запрос может выполняться 10 мс или 10 секунд. Разбираем индексы: B-tree, составные, покрывающие и когда они вредят.",
+    cover: "img/indeksy.svg",
+    tags: ["Базы данных", "SQL", "Разработка"],
+    date: "2026-04-09",
+    readTime: 11,
+    content: `
+      <p>Если ты когда-нибудь ждал ответа от сайта 10 секунд, а потом открывал тот же раздел мгновенно — скорее всего, дело было в индексах. Разберёмся, что это и почему без них база данных работает в разы медленнее.</p>
+
+      <p>Если ещё не читал про <a href="article.html?a=sql-zaprosy-s-nulya">SQL-запросы</a> — начни с той статьи.</p>
+
+      <h2>Проблема, которую решают индексы</h2>
+
+      <p>Представь таблицу <code>users</code> с миллионом строк. Ты пишешь:</p>
+
+      <pre><code class="language-sql">SELECT * FROM users WHERE email = 'kirill@mail.ru';</code></pre>
+
+      <p>Без индекса база данных читает <strong>каждую строку</strong> одну за другой, пока не найдёт нужную. Это называется <em>full table scan</em>. На миллионе строк — это секунды.</p>
+
+      <p>С индексом — миллисекунды. Потому что база сразу знает, где искать.</p>
+
+      <blockquote>Индекс — это как алфавитный указатель в конце книги. Вместо того чтобы листать всю книгу в поиске нужного слова, ты открываешь указатель и сразу видишь номер страницы.</blockquote>
+
+      <h2>Как устроен индекс</h2>
+
+      <p>Самый распространённый тип — <strong>B-tree</strong> (сбалансированное дерево). Внутри — отсортированная структура, где каждый узел содержит диапазон значений.</p>
+
+      <p>Схематично для поля <code>email</code>:</p>
+
+      <pre><code class="language-bash">                [m@mail.ru]
+              /             \\
+      [a...m]                [n...z]
+     /       \\              /       \\
+  [a...f]  [g...m]      [n...s]   [t...z]
+   |         |             |         |
+  ...       ...           ...       ...</code></pre>
+
+      <p>Поиск идёт от корня вниз — на каждом уровне отсекается половина вариантов. На миллионе записей нужно всего ~20 сравнений. Отсюда скорость.</p>
+
+      <h2>Создание индекса</h2>
+
+      <pre><code class="language-sql">-- Простой индекс по одному полю
+CREATE INDEX idx_users_email ON users (email);
+
+-- Уникальный индекс — гарантирует уникальность значений
+CREATE UNIQUE INDEX idx_users_email_unique ON users (email);
+
+-- Удалить индекс
+DROP INDEX idx_users_email;</code></pre>
+
+      <p>После создания индекс начинает использоваться автоматически. Писать запросы по-другому не нужно.</p>
+
+      <h2>Когда индекс помогает</h2>
+
+      <p>Индекс ускоряет:</p>
+
+      <ul>
+        <li><strong>WHERE</strong> — фильтрация по индексированному полю.</li>
+        <li><strong>JOIN</strong> — соединение таблиц по индексированному полю.</li>
+        <li><strong>ORDER BY</strong> — сортировка, если индекс уже упорядочен.</li>
+        <li><strong>GROUP BY</strong> — группировка по индексированному полю.</li>
+      </ul>
+
+      <p>Пример:</p>
+
+      <pre><code class="language-sql">-- До индекса: 2 секунды (полный перебор миллиона строк)
+-- После индекса: 5 миллисекунд
+SELECT * FROM orders WHERE user_id = 42;</code></pre>
+
+      <h2>Когда индекс не помогает</h2>
+
+      <p>Индекс работает плохо или вообще игнорируется, если:</p>
+
+      <ul>
+        <li><strong>Условие с функцией от поля.</strong> <code>WHERE LOWER(email) = 'x'</code> — индекс по <code>email</code> не сработает. Нужен функциональный индекс: <code>CREATE INDEX ON users (LOWER(email))</code>.</li>
+        <li><strong>Поиск по подстроке в середине.</strong> <code>WHERE email LIKE '%mail%'</code> — индекс не поможет, потому что неизвестно, с чего начинать поиск. А вот <code>LIKE 'kirill%'</code> — работает.</li>
+        <li><strong>Низкая селективность.</strong> Если поле имеет 2–3 значения (например, пол), индекс почти не помогает — база всё равно прочитает половину таблицы.</li>
+        <li><strong>Отрицание в WHERE.</strong> <code>WHERE status != 'done'</code> — часто игнорирует индекс.</li>
+      </ul>
+
+      <h2>Составные индексы</h2>
+
+      <p>Можно индексировать сразу несколько полей. Это полезно, если ты часто фильтруешь по комбинации:</p>
+
+      <pre><code class="language-sql">-- Индекс по двум полям
+CREATE INDEX idx_orders_user_status ON orders (user_id, status);
+
+-- Такой индекс ускорит:
+SELECT * FROM orders WHERE user_id = 42 AND status = 'paid';
+SELECT * FROM orders WHERE user_id = 42;
+
+-- НО НЕ ускорит:
+SELECT * FROM orders WHERE status = 'paid';</code></pre>
+
+      <p><strong>Правило левого префикса:</strong> составной индекс работает, если запрос использует <em>левое начало</em> списка полей. В примере выше — <code>user_id</code> идёт первым, поэтому запросы только по <code>user_id</code> тоже работают. А только по <code>status</code> — нет.</p>
+
+      <h2>Порядок полей в составном индексе</h2>
+
+      <p>Обычно первым ставят поле с <strong>наибольшей селективностью</strong> — то, что сильнее всего отсекает строки.</p>
+
+      <p>Пример: <code>orders</code> с полями <code>user_id</code> (много разных значений) и <code>status</code> (всего 3–4 значения).</p>
+
+      <p>Лучше <code>(user_id, status)</code>, а не <code>(status, user_id)</code>. Потому что <code>user_id</code> отсекает больше, а <code>status</code> уже добивает остаток.</p>
+
+      <h2>Покрывающий индекс</h2>
+
+      <p>Особый вид: индекс содержит <strong>все поля, которые нужны запросу</strong>. Тогда база данных вообще не обращается к самой таблице — берёт всё из индекса. Это очень быстро.</p>
+
+      <pre><code class="language-sql">-- Запрос нуждается в двух полях
+SELECT user_id, status FROM orders WHERE user_id = 42;
+
+-- Покрывающий индекс
+CREATE INDEX idx_orders_user_status ON orders (user_id, status);
+-- Всё нужное лежит в индексе — таблица не читается</code></pre>
+
+      <h2>Цена индексов</h2>
+
+      <p>Индексы — не бесплатные. Они:</p>
+
+      <ul>
+        <li><strong>Занимают место</strong> на диске — иногда столько же, сколько сама таблица.</li>
+        <li><strong>Замедляют INSERT, UPDATE, DELETE</strong> — потому что при изменении данных индекс тоже нужно обновить.</li>
+        <li><strong>Требуют времени на создание</strong> — на больших таблицах это часы.</li>
+      </ul>
+
+      <blockquote>Индекс — это компромисс: читаем быстрее, пишем медленнее. Если таблица в основном пишется (логи, события), много индексов — плохая идея.</blockquote>
+
+      <h2>Как проверить, используется ли индекс</h2>
+
+      <p>Есть специальная команда <code>EXPLAIN</code> — она показывает план выполнения запроса:</p>
+
+      <pre><code class="language-sql">EXPLAIN SELECT * FROM users WHERE email = 'kirill@mail.ru';</code></pre>
+
+      <p>В выводе смотри на:</p>
+
+      <ul>
+        <li><strong>Seq Scan</strong> (или Full Table Scan) — плохо, индекс не используется.</li>
+        <li><strong>Index Scan</strong> — хорошо, индекс работает.</li>
+        <li><strong>Index Only Scan</strong> — идеально, покрывающий индекс.</li>
+      </ul>
+
+      <p>На <code>EXPLAIN ANALYZE</code> (с анализом) покажет ещё и реальное время выполнения:</p>
+
+      <pre><code class="language-sql">EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'kirill@mail.ru';</code></pre>
+
+      <h2>Практические советы</h2>
+
+      <ol>
+        <li><strong>Индексируй внешние ключи.</strong> <code>user_id</code>, <code>order_id</code> — их всегда используют в JOIN.</li>
+        <li><strong>Индексируй поля в WHERE и ORDER BY.</strong> Если по полю часто фильтруешь — индексируй.</li>
+        <li><strong>Не индексируй всё подряд.</strong> Каждый индекс замедляет запись.</li>
+        <li><strong>Проверяй EXPLAIN.</strong> После создания индекса убедись, что запрос его реально использует.</li>
+        <li><strong>Начинай с простого.</strong> Не делай сразу десять индексов — начни с тех, что нужны самому частому запросу.</li>
+      </ol>
+
+      <h2>Типы индексов в PostgreSQL</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Тип</th><th>Для чего</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>B-tree</td><td>Стандартный. Для <code>=</code>, <code>&lt;</code>, <code>&gt;</code>, ORDER BY, LIKE с префиксом</td></tr>
+          <tr><td>Hash</td><td>Только для <code>=</code>. Редко используется</td></tr>
+          <tr><td>GIN</td><td>Для полнотекстового поиска, массивов, JSONB</td></tr>
+          <tr><td>GiST</td><td>Для геометрии, диапазонов</td></tr>
+          <tr><td>BRIN</td><td>Для больших таблиц с упорядоченными данными (логи, метрики)</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Для 95% случаев B-tree — то, что нужно. Остальные — нишевые.</p>
+
+      <h2>Итог</h2>
+
+      <p>Индексы — главный инструмент ускорения запросов. Работают через структуру типа дерева, отсекая половину вариантов на каждом шаге. Замедляют запись, но в разы ускоряют чтение. Составные индексы — под конкретные запросы, покрывающие — самый быстрый вариант. Проверяй всё через <code>EXPLAIN</code>.</p>
+    `
+  },
+  {
+    slug: "asinhronnost-v-python",
+    title: "Асинхронность в Python — asyncio простыми словами",
+    excerpt: "async, await, event loop, задачи и корутины. Разбираем, зачем нужна асинхронность в Python, где она помогает и где только мешает.",
+    cover: "img/asyncio.svg",
+    tags: ["Python", "Разработка", "Теория"],
+    date: "2026-04-10",
+    readTime: 11,
+    content: `
+      <p>Если ты писал на Python что-то, что работает с сетью — парсеры, ботов, веб-сервисы, — скорее всего сталкивался с <code>async</code> и <code>await</code>. Но что за ними стоит, объясняют редко. Разберёмся.</p>
+
+      <p>Если ещё не читал про <a href="article.html?a=asinhronnost-v-javascript">асинхронность в JavaScript</a> — можешь глянуть для сравнения, принципы похожи.</p>
+
+      <h2>Проблема, которую решает асинхронность</h2>
+
+      <p>Python выполняет код строка за строкой. Если одна строка «ждёт» (например, скачивает файл из интернета), всё остальное стоит на месте.</p>
+
+      <pre><code class="language-python">import requests
+
+# Скачиваем три файла по очереди
+data1 = requests.get('https://site.com/file1').content  # ждём 1 сек
+data2 = requests.get('https://site.com/file2').content  # ждём 1 сек
+data3 = requests.get('https://site.com/file3').content  # ждём 1 сек
+# Итого: 3 секунды</code></pre>
+
+      <p>Казалось бы, почему бы не запустить все три запроса одновременно? Потому что в обычном (синхронном) коде нельзя — он ждёт каждый по очереди.</p>
+
+      <p>Асинхронность решает это: пока один запрос ждёт ответа, программа делает что-то другое.</p>
+
+      <blockquote>Асинхронность — это не про параллельность. Это про то, чтобы не простаивать в ожидании. Пока ждёшь ответ от сети, можешь заняться другим делом.</blockquote>
+
+      <h2>Синхронный vs асинхронный код</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Подход</th><th>Что делает во время ожидания</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Синхронный</td><td>Стоит и ждёт</td></tr>
+          <tr><td>Асинхронный</td><td>Переключается на другие задачи</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Асинхронность хороша, когда много операций <strong>ввода-вывода</strong> (I/O): сетевые запросы, работа с файлами, база данных. И почти бесполезна, если у тебя тяжёлые вычисления (CPU-bound) — там нужны процессы, а не async.</p>
+
+      <h2>Ключевые понятия</h2>
+
+      <h3>Event loop</h3>
+
+      <p>Event loop (цикл событий) — это «дирижёр» асинхронной программы. Он следит за всеми задачами и решает, какую запустить следующей.</p>
+
+      <p>Работает так:</p>
+
+      <ol>
+        <li>Запускает задачу.</li>
+        <li>Задача доходит до «жду сеть» — говорит event loop: «я подожду».</li>
+        <li>Event loop переключается на следующую задачу.</li>
+        <li>Когда приходит ответ — возвращается к первой задаче.</li>
+      </ol>
+
+      <p>В Python event loop из модуля <code>asyncio</code>. Запускается через <code>asyncio.run()</code>.</p>
+
+      <h3>Корутина (coroutine)</h3>
+
+      <p>Корутина — это функция, объявленная через <code>async def</code>. Она не выполняется как обычная функция — при вызове она возвращает объект-корутину, который нужно запустить в event loop.</p>
+
+      <pre><code class="language-python"># Обычная функция — выполняется сразу при вызове
+def normal():
+    return 42
+
+# Корутина — при вызове возвращает объект
+async def coro():
+    return 42
+
+# Просто вызвать недостаточно — нужно await или запустить в loop
+result = coro()   # это НЕ 42, это объект-корутина</code></pre>
+
+      <h3>await</h3>
+
+      <p><code>await</code> говорит: «подожди, пока эта операция завершится, но не блокируй event loop». Ключевое слово используется только внутри <code>async def</code>.</p>
+
+      <pre><code class="language-python">import asyncio
+
+async def main():
+    print('Начало')
+    # Имитируем запрос — ждём 1 секунду, но не блокируем loop
+    await asyncio.sleep(1)
+    print('Прошла секунда')
+
+asyncio.run(main())</code></pre>
+
+      <h2>Первый асинхронный пример</h2>
+
+      <p>Сравним синхронный и асинхронный код, который делает три «запроса» по секунде.</p>
+
+      <h3>Синхронный</h3>
+
+      <pre><code class="language-python">import time
+
+def fetch(name):
+    print(f'{name}: начал')
+    time.sleep(1)              # ← блокирует всё
+    print(f'{name}: готов')
+
+start = time.time()
+fetch('A')
+fetch('B')
+fetch('C')
+print(f'Всего: {time.time() - start:.2f} сек')
+# Всего: ~3 секунды</code></pre>
+
+      <h3>Асинхронный</h3>
+
+      <pre><code class="language-python">import asyncio
+import time
+
+async def fetch(name):
+    print(f'{name}: начал')
+    await asyncio.sleep(1)     # ← отдаёт управление loop
+    print(f'{name}: готов')
+
+async def main():
+    # Запускаем три задачи одновременно
+    await asyncio.gather(
+        fetch('A'),
+        fetch('B'),
+        fetch('C'),
+    )
+
+start = time.time()
+asyncio.run(main())
+print(f'Всего: {time.time() - start:.2f} сек')
+# Всего: ~1 секунда</code></pre>
+
+      <p>Разница в три раза. Потому что все три «запроса» шли параллельно, а не по очереди.</p>
+
+      <p><code>asyncio.gather</code> — ключевая функция. Она принимает несколько корутин и запускает их одновременно, дожидаясь всех.</p>
+
+      <h2>Асинхронные библиотеки</h2>
+
+      <p>Важно: обычные библиотеки вроде <code>requests</code> <strong>не работают</strong> с <code>await</code>. Если внутри async-функции вызвать <code>requests.get()</code>, он заблокирует весь event loop, и вся выгода пропадёт.</p>
+
+      <p>Нужны асинхронные аналоги:</p>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Синхронная</th><th>Асинхронная</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>requests</td><td>aiohttp, httpx</td></tr>
+          <tr><td>psycopg2</td><td>asyncpg</td></tr>
+          <tr><td>pymongo</td><td>motor</td></tr>
+          <tr><td>redis</td><td>aioredis</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Пример с <code>aiohttp</code>:</p>
+
+      <pre><code class="language-python">import aiohttp
+import asyncio
+
+async def fetch(url):
+    # Клиентская сессия должна быть открыта на всё время работы
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            return await response.text()
+
+async def main():
+    urls = [
+        'https://example.com/1',
+        'https://example.com/2',
+        'https://example.com/3',
+    ]
+    # Запускаем все запросы одновременно
+    results = await asyncio.gather(*[fetch(u) for u in urls])
+    print(f'Получено {len(results)} ответов')
+
+asyncio.run(main())</code></pre>
+
+      <h2>Создание задач</h2>
+
+      <p>Если нужно запустить корутину «в фоне» и не ждать её окончания, используют <code>asyncio.create_task</code>:</p>
+
+      <pre><code class="language-python">async def background_work():
+    await asyncio.sleep(5)
+    print('Фоновая работа завершена')
+
+async def main():
+    # Запускаем в фоне и не ждём
+    task = asyncio.create_task(background_work())
+    print('Главная функция продолжает работу')
+    # ... что-то делаем ...
+    await task  # дожидаемся завершения в конце
+
+asyncio.run(main())</code></pre>
+
+      <h2>Таймауты</h2>
+
+      <p>Если запрос может зависнуть — задаём лимит времени:</p>
+
+      <pre><code class="language-python">import asyncio
+
+async def slow_operation():
+    await asyncio.sleep(10)
+
+async def main():
+    try:
+        # Если за 3 секунды не выполнится — выбросит TimeoutError
+        await asyncio.wait_for(slow_operation(), timeout=3.0)
+    except asyncio.TimeoutError:
+        print('Не успел за 3 секунды')
+
+asyncio.run(main())</code></pre>
+
+      <h2>Когда использовать async</h2>
+
+      <p><strong>Подходит:</strong></p>
+
+      <ul>
+        <li>Много сетевых запросов (парсеры, API-клиенты).</li>
+        <li>Веб-серверы (FastAPI, aiohttp).</li>
+        <li>Telegram-боты (aiogram).</li>
+        <li>Работа с БД под нагрузкой (asyncpg, motor).</li>
+        <li>WebSocket-серверы.</li>
+      </ul>
+
+      <p><strong>Не подходит:</strong></p>
+
+      <ul>
+        <li>Тяжёлые вычисления (обработка видео, ML).</li>
+        <li>Простые скрипты на 20 строк — оверинжиниринг.</li>
+        <li>Скрипты без I/O — выгоды нет.</li>
+      </ul>
+
+      <blockquote>Асинхронность ускоряет не любую программу, а только ту, которая много ждёт. Если у тебя код проводит время в вычислениях, а не в ожидании — async не поможет.</blockquote>
+
+      <h2>Частые ошибки</h2>
+
+      <ul>
+        <li><strong>Вызов синхронной библиотеки внутри async-кода.</strong> <code>requests</code> или <code>time.sleep</code> заблокируют event loop. Только <code>aiohttp</code> и <code>asyncio.sleep</code>.</li>
+        <li><strong>Забыть <code>await</code>.</strong> Функция вернёт объект-корутину, а не результат.</li>
+        <li><strong>Забыть <code>asyncio.run()</code>.</strong> Ничего не запустится без него.</li>
+        <li><strong>Не закрыть сессию.</strong> <code>aiohttp.ClientSession</code> нужно либо закрывать вручную, либо использовать <code>async with</code>.</li>
+      </ul>
+
+      <h2>Итог</h2>
+
+      <p>Асинхронность в Python — это способ не простаивать во время ожидания. Ключевые слова: <code>async</code>, <code>await</code>, <code>asyncio.gather</code>. Работает через event loop — «дирижёра», который переключает задачи. Помогает на I/O (сеть, файлы, БД), не помогает на CPU. Использовать только с асинхронными библиотеками.</p>
+    `
+  },
+  {
+    slug: "zachem-nuzhen-typescript",
+    title: "Зачем нужен TypeScript, если есть JavaScript",
+    excerpt: "Типы, интерфейсы, компиляция — разбираем, что даёт TypeScript, кому он нужен и почему крупные проекты уходят на него.",
+    cover: "img/typescript.svg",
+    tags: ["TypeScript", "JavaScript", "Разработка"],
+    date: "2026-04-11",
+    readTime: 10,
+    content: `
+      <p>TypeScript — это надстройка над JavaScript, которая добавляет типы. За последние годы он стал стандартом для крупных фронтенд-проектов и серверной разработки на Node.js. Разберёмся, зачем он нужен и стоит ли его учить.</p>
+
+      <h2>Проблема JavaScript</h2>
+
+      <p>JavaScript — динамически типизированный язык. Это значит, что тип переменной определяется во время выполнения, а не при написании кода.</p>
+
+      <pre><code class="language-javascript">// Классический пример проблемы
+function greet(user) {
+  return 'Привет, ' + user.name;
+}
+
+// Где-то в коде
+greet({ name: 'Кирилл' });   // ✓ работает
+greet(undefined);            // ✗ упадёт: Cannot read property 'name' of undefined
+greet('Кирилл');             // ✗ упадёт: user.name — undefined</code></pre>
+
+      <p>Ошибку видно только когда код до неё дойдёт. В маленьком проекте это терпимо, в большом — катастрофа: одна опечатка ломает прод.</p>
+
+      <blockquote>JavaScript позволяет писать код быстро, но расплата — ошибки всплывают в самый неподходящий момент.</blockquote>
+
+      <h2>Что делает TypeScript</h2>
+
+      <p>TypeScript даёт возможность явно указывать типы. И проверяет их <strong>до запуска</strong> — прямо во время написания кода, в редакторе.</p>
+
+      <pre><code class="language-typescript">// Указываем, что user — объект с полем name: string
+function greet(user: { name: string }): string {
+  return 'Привет, ' + user.name;
+}
+
+greet({ name: 'Кирилл' });   // ✓
+greet(undefined);            // ✗ ошибка ещё в редакторе
+greet('Кирилл');             // ✗ ошибка ещё в редакторе</code></pre>
+
+      <p>Редактор (VS Code, WebStorm) сразу подчёркивает неправильные вызовы красным. Ошибка не дойдёт до прода.</p>
+
+      <h2>Как это работает</h2>
+
+      <p>TypeScript <strong>компилируется в JavaScript</strong>. Браузеры и Node.js не умеют исполнять TS напрямую — только JS.</p>
+
+      <pre><code class="language-bash"># Исходник
+app.ts
+
+# После компиляции
+app.js   ← этот файл уже запускается</code></pre>
+
+      <p>Во время компиляции TypeScript проверяет типы. Если есть ошибки — не соберётся (если включён строгий режим). Если всё ок — генерирует обычный JS.</p>
+
+      <p>В рантайме типов <strong>нет</strong> — они полностью исчезают. Всё превращается в чистый JavaScript.</p>
+
+      <h2>Основные конструкции</h2>
+
+      <h3>Типы примитивов</h3>
+
+      <pre><code class="language-typescript">// Явное указание типов
+let name: string = 'Кирилл';
+let age: number = 30;
+let isActive: boolean = true;
+
+// Автовывод — TS сам понимает тип по значению
+let city = 'Москва';   // тип: string, указывать не нужно
+let count = 42;        // тип: number</code></pre>
+
+      <h3>Массивы и объекты</h3>
+
+      <pre><code class="language-typescript">// Массив чисел
+const numbers: number[] = [1, 2, 3];
+
+// Массив строк — альтернативный синтаксис
+const names: Array&lt;string&gt; = ['Анна', 'Иван'];
+
+// Объект
+const user: { name: string; age: number } = {
+  name: 'Кирилл',
+  age: 30,
+};</code></pre>
+
+      <h3>Интерфейсы и типы</h3>
+
+      <p>Для сложных объектов описывают интерфейсы:</p>
+
+      <pre><code class="language-typescript">// Интерфейс описывает форму объекта
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role?: string;   // знак ? — поле необязательное
+}
+
+function greet(user: User): string {
+  return `Привет, ${user.name}`;   // редактор знает, что user.name — string
+}
+
+const kirill: User = {
+  id: 1,
+  name: 'Кирилл',
+  email: 'kirill@mail.ru',
+};
+</code></pre>
+
+      <p>Аналогично можно через <code>type</code>:</p>
+
+      <pre><code class="language-typescript">type User = {
+  id: number;
+  name: string;
+};</code></pre>
+
+      <p>Разница между <code>interface</code> и <code>type</code> тонкая, на старте можно использовать любое. По общему правилу: интерфейсы — для объектов, типы — для всего остального.</p>
+
+      <h3>Union-типы</h3>
+
+      <p>Позволяют указать, что значение может быть одним из нескольких:</p>
+
+      <pre><code class="language-typescript">// Статус может быть только одним из этих значений
+type Status = 'pending' | 'paid' | 'cancelled';
+
+function updateStatus(status: Status) {
+  // ...
+}
+
+updateStatus('paid');       // ✓
+updateStatus('unknown');    // ✗ ошибка компиляции</code></pre>
+
+      <h3>Generics</h3>
+
+      <p>Для функций и структур, которые работают с разными типами:</p>
+
+      <pre><code class="language-typescript">// Функция возвращает массив того же типа, что получила
+function firstElement&lt;T&gt;(arr: T[]): T | undefined {
+  return arr[0];
+}
+
+const num = firstElement([1, 2, 3]);      // тип: number | undefined
+const str = firstElement(['a', 'b']);     // тип: string | undefined</code></pre>
+
+      <h2>Что TypeScript даёт на практике</h2>
+
+      <ul>
+        <li><strong>Автодополнение в редакторе.</strong> Пишешь <code>user.</code> — редактор показывает список полей. Работает точно, а не наугад.</li>
+        <li><strong>Рефакторинг без страха.</strong> Переименовал поле — редактор покажет все места, где его нужно поправить.</li>
+        <li><strong>Ошибки до продакшена.</strong> Опечатки и несоответствия типов ловятся в момент написания кода.</li>
+        <li><strong>Документация из коробки.</strong> Интерфейсы — это живая документация, которая не устаревает.</li>
+        <li><strong>Уверенность при командной работе.</strong> Ты точно знаешь, что функция принимает и возвращает.</li>
+      </ul>
+
+      <h2>Что TypeScript не делает</h2>
+
+      <ul>
+        <li><strong>Не ускоряет код.</strong> Это надстройка для разработки, а не оптимизация.</li>
+        <li><strong>Не защищает от всех ошибок.</strong> Типы — не серебряная пуля. Логические ошибки он не поймает.</li>
+        <li><strong>Не работает в браузере напрямую.</strong> Только через компиляцию в JS.</li>
+      </ul>
+
+      <h2>Синтаксис на примере</h2>
+
+      <p>Сравни обычный JS и TS. Одна и та же функция.</p>
+
+      <h3>JavaScript</h3>
+
+      <pre><code class="language-javascript">function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}</code></pre>
+
+      <h3>TypeScript</h3>
+
+      <pre><code class="language-typescript">interface CartItem {
+  price: number;
+  quantity: number;
+}
+
+function calculateTotal(items: CartItem[]): number {
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}</code></pre>
+
+      <p>Кода чуть больше, но теперь редактор подсказывает поля, а если передать не тот тип — сразу увидишь ошибку.</p>
+
+      <h2>Кому стоит учить</h2>
+
+      <ul>
+        <li><strong>Фронтенд-разработчикам.</strong> Почти все крупные проекты на React, Angular и Vue используют TS.</li>
+        <li><strong>Node.js-разработчикам.</strong> NestJS, tRPC и большинство современных фреймворков — на TypeScript.</li>
+        <li><strong>Тем, кто работает в команде.</strong> Типы — это контракт между разработчиками.</li>
+        <li><strong>Тем, кто пишет библиотеки.</strong> TS-типы помогают пользователям вашей библиотеки.</li>
+      </ul>
+
+      <p><strong>Можно не учить, если:</strong></p>
+
+      <ul>
+        <li>Ты пишешь маленькие скрипты для себя.</li>
+        <li>Работаешь в проекте, где TS не принят.</li>
+        <li>Только начинаешь с JavaScript — сначала база, потом типы.</li>
+      </ul>
+
+      <h2>Как начать</h2>
+
+      <p>TypeScript не нужно ставить глобально. Проще всего:</p>
+
+      <pre><code class="language-bash"># Установить TypeScript в проект
+npm install --save-dev typescript
+
+# Создать конфиг
+npx tsc --init
+
+# Скомпилировать файл
+npx tsc app.ts</code></pre>
+
+      <p>Но самый простой путь для новичка — открыть <strong>официальный playground</strong>: <code>typescriptlang.org/play</code>. Пишешь код — сразу видишь, во что он компилируется и где ошибки. Ничего не нужно устанавливать.</p>
+
+      <blockquote>Если ты уверенно пишешь на JavaScript — переход на TypeScript занимает неделю-две. Синтаксис почти тот же, добавляются типы. Дальше — вопрос привычки.</blockquote>
+
+      <h2>Итог</h2>
+
+      <p>TypeScript — это JavaScript с типами. Даёт автодополнение, ловит ошибки до запуска и делает код понятнее для команды. Компилируется в обычный JS, в браузере типов нет. Учить стоит, если работаешь с большими проектами или в команде. Для мелких скриптов — не обязателен.</p>
+    `
+   }
 ];
