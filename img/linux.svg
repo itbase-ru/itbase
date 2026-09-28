@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="80" y="60" width="640" height="260" rx="14" fill="#12161d" stroke="#222a36" stroke-width="2"/>
+  <circle cx="110" cy="90" r="7" fill="#8a95a6"/>
+  <circle cx="135" cy="90" r="7" fill="#8a95a6"/>
+  <circle cx="160" cy="90" r="7" fill="#ffb454"/>
+  <text x="110" y="140" font-family="monospace" font-size="18" fill="#ffb454">$ pwd</text>
+  <text x="110" y="175" font-family="monospace" font-size="16" fill="#8a95a6">/home/kirill/projects</text>
+  <text x="110" y="215" font-family="monospace" font-size="18" fill="#ffb454">$ ls -la</text>
+  <text x="110" y="245" font-family="monospace" font-size="16" fill="#8a95a6">drwxr-xr-x  src</text>
+  <text x="110" y="272" font-family="monospace" font-size="16" fill="#8a95a6">-rwxr-xr-x  run.sh</text>
+  <text x="110" y="299" font-family="monospace" font-size="16" fill="#8a95a6">-rw-r--r--  README.md</text>
+  <text x="400" y="370" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#8a95a6" letter-spacing="4">LINUX · TERMINAL</text>
+</svg>
