@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="60" y="140" width="200" height="120" rx="12" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="160" y="185" text-anchor="middle" font-family="monospace" font-size="18" fill="#8a95a6">header</text>
+  <text x="160" y="215" text-anchor="middle" font-family="monospace" font-size="12" fill="#8a95a6">.base64</text>
+  <rect x="300" y="140" width="200" height="120" rx="12" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="400" y="185" text-anchor="middle" font-family="monospace" font-size="18" fill="#ffb454">payload</text>
+  <text x="400" y="215" text-anchor="middle" font-family="monospace" font-size="12" fill="#8a95a6">.base64</text>
+  <rect x="540" y="140" width="200" height="120" rx="12" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="640" y="185" text-anchor="middle" font-family="monospace" font-size="18" fill="#8a95a6">signature</text>
+  <text x="640" y="215" text-anchor="middle" font-family="monospace" font-size="12" fill="#8a95a6">HMAC-SHA256</text>
+  <text x="285" y="200" text-anchor="middle" font-family="monospace" font-size="30" fill="#8a95a6">.</text>
+  <text x="525" y="200" text-anchor="middle" font-family="monospace" font-size="30" fill="#8a95a6">.</text>
+  <text x="400" y="340" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#8a95a6" letter-spacing="4">JSON WEB TOKEN</text>
+</svg>
