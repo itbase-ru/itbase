@@ -239,7 +239,26 @@
   <lastmod>2026-04-07</lastmod>
   <priority>0.8</priority>
 </url>
-
+<url>
+  <loc>https://itbase-ru.github.io/article.html?a=git-vetki-i-sliyanie</loc>
+  <lastmod>2026-04-08</lastmod>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://itbase-ru.github.io/article.html?a=indeksy-v-bazah-dannyh</loc>
+  <lastmod>2026-04-09</lastmod>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://itbase-ru.github.io/article.html?a=asinhronnost-v-python</loc>
+  <lastmod>2026-04-10</lastmod>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://itbase-ru.github.io/article.html?a=zachem-nuzhen-typescript</loc>
+  <lastmod>2026-04-11</lastmod>
+  <priority>0.8</priority>
+</url>
 </urlset>
 
 </urlset>
