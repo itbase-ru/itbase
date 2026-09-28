@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="60" y="130" width="280" height="60" rx="10" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="200" y="168" text-anchor="middle" font-family="monospace" font-size="20" fill="#e9eef5">GET /articles</text>
+  <rect x="460" y="130" width="280" height="60" rx="10" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="600" y="168" text-anchor="middle" font-family="monospace" font-size="20" fill="#ffb454">200 OK</text>
+  <rect x="60" y="210" width="280" height="60" rx="10" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="200" y="248" text-anchor="middle" font-family="monospace" font-size="20" fill="#e9eef5">POST /orders</text>
+  <rect x="460" y="210" width="280" height="60" rx="10" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="600" y="248" text-anchor="middle" font-family="monospace" font-size="20" fill="#ffb454">201 Created</text>
+  <text x="400" y="330" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#8a95a6" letter-spacing="4">HTTP · METHODS · STATUS</text>
+</svg>
