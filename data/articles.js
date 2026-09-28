@@ -6146,8 +6146,7 @@ interface User {
 }
 
 function greet(user: User): string {
-  return `Привет, ${user.name}`;   // редактор знает, что user.name — string
-}
+   return 'Привет, ' + user.name;   // редактор знает, что user.name — string}
 
 const kirill: User = {
   id: 1,
