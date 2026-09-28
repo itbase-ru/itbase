@@ -261,7 +261,7 @@ main{flex:1}
   background:#0d1117;
   border:1px solid var(--border);
   border-radius:12px;
-  padding:18px 16px;
+  padding:46px 16px 18px;   /* ← сверху 46px — место под кнопку «Копировать» */
   overflow-x:auto;
   min-width:0;         /* ← добавь эту строку */
   font-size:14px;
@@ -283,9 +283,11 @@ main{flex:1}
   background:var(--surface-2);border:1px solid var(--border);
   color:var(--muted);font-size:12px;padding:5px 11px;border-radius:7px;
   cursor:pointer;transition:.2s;font-family:system-ui,sans-serif;
+  opacity:.55;                 /* ← полупрозрачна в покое — не мешает коду */
+  z-index:2;                   /* ← всегда поверх кода */
 }
-.copy-btn:hover{color:var(--text);border-color:#3a4759}
-.copy-btn.is-done{color:#4ade80;border-color:#4ade80}
+.copy-btn:hover{color:var(--text);border-color:#3a4759;opacity:1}
+.copy-btn.is-done{color:#4ade80;border-color:#4ade80;opacity:1}
 
 /* --- TOC --- */
 .toc{
@@ -420,7 +422,9 @@ main{flex:1}
   font-size:14px!important;
 }
 .article-body pre[class*="language-"]{
-  background:#0d1117!important;padding:18px 16px!important;
+  /* ← тот же отступ, что и у обычного pre: сверху место под кнопку */
+  background:#0d1117!important;
+  padding:46px 16px 18px!important;
 }
 
 /* --- Печать --- */
@@ -518,4 +522,4 @@ main{flex:1}
 .cookie-banner__btn:hover{filter:brightness(1.08)}
 @media(min-width:700px){
   .cookie-banner{left:24px;right:24px;bottom:24px}
-}
+   }
