@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <text x="200" y="90" text-anchor="middle" font-family="monospace" font-size="34" fill="#8a95a6" font-weight="bold">REST</text>
+  <text x="600" y="90" text-anchor="middle" font-family="monospace" font-size="34" fill="#ffb454" font-weight="bold">GraphQL</text>
+  <line x1="400" y1="60" x2="400" y2="340" stroke="#222a36" stroke-width="2"/>
+  <rect x="80" y="130" width="240" height="40" rx="8" fill="#12161d" stroke="#222a36"/>
+  <text x="200" y="156" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">GET /users/42</text>
+  <rect x="80" y="185" width="240" height="40" rx="8" fill="#12161d" stroke="#222a36"/>
+  <text x="200" y="211" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">GET /users/42/orders</text>
+  <rect x="80" y="240" width="240" height="40" rx="8" fill="#12161d" stroke="#222a36"/>
+  <text x="200" y="266" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">GET /users/42/reviews</text>
+  <text x="200" y="320" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#8a95a6">3 запроса</text>
+  <rect x="480" y="130" width="240" height="150" rx="12" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="600" y="168" text-anchor="middle" font-family="monospace" font-size="14" fill="#ffb454">{</text>
+  <text x="600" y="192" text-anchor="middle" font-family="monospace" font-size="14" fill="#e9eef5">user(id: 42) {</text>
+  <text x="600" y="216" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">name, orders, reviews</text>
+  <text x="600" y="240" text-anchor="middle" font-family="monospace" font-size="14" fill="#ffb454">}</text>
+  <text x="600" y="264" text-anchor="middle" font-family="monospace" font-size="14" fill="#ffb454">}</text>
+  <text x="600" y="320" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#ffb454">1 запрос</text>
+</svg>
