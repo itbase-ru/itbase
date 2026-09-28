@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="300" y="60" width="200" height="50" rx="10" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="400" y="92" text-anchor="middle" font-family="monospace" font-size="18" fill="#ffb454">ROOT</text>
+  <rect x="120" y="170" width="160" height="50" rx="10" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="200" y="202" text-anchor="middle" font-family="monospace" font-size="16" fill="#8a95a6">a...m</text>
+  <rect x="520" y="170" width="160" height="50" rx="10" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="600" y="202" text-anchor="middle" font-family="monospace" font-size="16" fill="#8a95a6">n...z</text>
+  <rect x="40" y="280" width="110" height="50" rx="8" fill="#12161d" stroke="#222a36"/>
+  <text x="95" y="312" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">a...f</text>
+  <rect x="180" y="280" width="110" height="50" rx="8" fill="#12161d" stroke="#222a36"/>
+  <text x="235" y="312" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">g...m</text>
+  <rect x="510" y="280" width="110" height="50" rx="8" fill="#12161d" stroke="#222a36"/>
+  <text x="565" y="312" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">n...s</text>
+  <rect x="650" y="280" width="110" height="50" rx="8" fill="#12161d" stroke="#222a36"/>
+  <text x="705" y="312" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">t...z</text>
+  <line x1="400" y1="110" x2="200" y2="170" stroke="#222a36" stroke-width="2"/>
+  <line x1="400" y1="110" x2="600" y2="170" stroke="#222a36" stroke-width="2"/>
+  <line x1="200" y1="220" x2="95" y2="280" stroke="#222a36" stroke-width="2"/>
+  <line x1="200" y1="220" x2="235" y2="280" stroke="#222a36" stroke-width="2"/>
+  <line x1="600" y1="220" x2="565" y2="280" stroke="#222a36" stroke-width="2"/>
+  <line x1="600" y1="220" x2="705" y2="280" stroke="#222a36" stroke-width="2"/>
+  <text x="400" y="375" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#8a95a6" letter-spacing="4">B-TREE INDEX</text>
+</svg>
