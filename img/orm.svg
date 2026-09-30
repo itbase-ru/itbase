@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="80" y="120" width="240" height="160" rx="14" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="200" y="155" text-anchor="middle" font-family="monospace" font-size="16" fill="#8a95a6">class User</text>
+  <line x1="100" y1="175" x2="300" y2="175" stroke="#222a36" stroke-width="1"/>
+  <text x="100" y="200" font-family="monospace" font-size="13" fill="#e9eef5">id: int</text>
+  <text x="100" y="225" font-family="monospace" font-size="13" fill="#e9eef5">name: str</text>
+  <text x="100" y="250" font-family="monospace" font-size="13" fill="#e9eef5">email: str</text>
+  <rect x="480" y="120" width="240" height="160" rx="14" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="600" y="155" text-anchor="middle" font-family="monospace" font-size="16" fill="#ffb454">table users</text>
+  <line x1="500" y1="175" x2="700" y2="175" stroke="#222a36" stroke-width="1"/>
+  <text x="500" y="200" font-family="monospace" font-size="13" fill="#8a95a6">id   integer</text>
+  <text x="500" y="225" font-family="monospace" font-size="13" fill="#8a95a6">name varchar</text>
+  <text x="500" y="250" font-family="monospace" font-size="13" fill="#8a95a6">email varchar</text>
+  <path d="M 325,200 L 475,200" stroke="#ffb454" stroke-width="3" marker-end="url(#ar)"/>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffb454"/>
+    </marker>
+  </defs>
+  <text x="400" y="360" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#8a95a6" letter-spacing="4">ORM · OBJECTS ↔ TABLES</text>
+</svg>
