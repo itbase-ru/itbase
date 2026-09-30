@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <rect x="100" y="160" width="180" height="80" rx="12" fill="#12161d" stroke="#8a95a6" stroke-width="2"/>
+  <text x="190" y="208" text-anchor="middle" font-family="monospace" font-size="18" fill="#8a95a6">client</text>
+  <rect x="520" y="160" width="180" height="80" rx="12" fill="#12161d" stroke="#ffb454" stroke-width="2"/>
+  <text x="610" y="208" text-anchor="middle" font-family="monospace" font-size="18" fill="#ffb454">server</text>
+  <line x1="285" y1="180" x2="515" y2="180" stroke="#ffb454" stroke-width="3" marker-end="url(#r1)"/>
+  <line x1="515" y1="220" x2="285" y2="220" stroke="#ffb454" stroke-width="3" marker-end="url(#r2)"/>
+  <defs>
+    <marker id="r1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffb454"/>
+    </marker>
+    <marker id="r2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffb454"/>
+    </marker>
+  </defs>
+  <text x="400" y="140" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#8a95a6">постоянное соединение</text>
+  <text x="400" y="260" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#8a95a6">двусторонний обмен</text>
+  <text x="400" y="350" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#8a95a6" letter-spacing="4">WEBSOCKET · REAL-TIME</text>
+</svg>
