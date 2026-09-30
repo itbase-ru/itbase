@@ -379,10 +379,36 @@ function initArticle(){
     setTimeout(() => cp.textContent = old, 1500);
   });
 
-  // Похожие
-  const related = ARTICLES
-    .filter(a => a.slug !== article.slug && a.tags.some(t => article.tags.includes(t)))
-    .slice(0, 3);
+  // Похожие — по количеству общих тегов, при равенстве — свежие сверху
+  const scored = ARTICLES
+    .filter(a => a.slug !== article.slug)
+    .map(a => {
+      const overlap = a.tags.filter(t => article.tags.includes(t)).length;
+      return { article: a, overlap: overlap };
+    })
+    .filter(x => x.overlap > 0)
+    .sort((x, y) => {
+      if (y.overlap !== x.overlap) return y.overlap - x.overlap;
+      return y.article.date.localeCompare(x.article.date);
+    });
+
+  const related = scored.slice(0, 3).map(x => x.article);
+
+  // Если по тегам набралось меньше 3 — добираем самыми свежими
+  if (related.length < 3){
+    const used = new Set(related.map(a => a.slug));
+    used.add(article.slug);
+    ARTICLES
+      .slice()
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .forEach(a => {
+        if (related.length < 3 && !used.has(a.slug)){
+          related.push(a);
+          used.add(a.slug);
+        }
+      });
+  }
+
   const relBox = $('#related');
   if (related.length === 0){
     relBox.parentElement.style.display = 'none';
