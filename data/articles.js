@@ -7096,5 +7096,1006 @@ html = '&lt;p&gt;' + escape_html(comment) + '&lt;/p&gt;'</code></pre>
 
       <p>SQL-инъекция, XSS и CSRF — три классические атаки, которые до сих пор работают. От первой спасают параметризованные запросы, от второй — экранирование и CSP, от третьей — CSRF-токены и SameSite cookie. Все три объединяет одно правило: никогда не доверяй пользовательскому вводу. Если хочешь глубже про безопасность — посмотри <a href="article.html?a=kak-rabotaet-https">как работает HTTPS</a> и <a href="article.html?a=api-klyuch-kak-ne-slit">как не слить API-ключ</a>.</p>
     `
-     }
+     },
+     {
+    slug: "heshirovanie-paroley",
+    title: "Как правильно хранить пароли — хеширование и соль",
+    excerpt: "Почему нельзя хранить пароли в открытом виде, чем MD5 хуже bcrypt и что такое соль. Разбираем на примерах кода.",
+    cover: "img/passwords.svg",
+    tags: ["Безопасность", "Разработка", "Теория"],
+    date: "2026-04-16",
+    readTime: 10,
+    content: `
+      <p>Кажется, что хранить пароли просто: положил в базу — и всё. Но если база утечёт (а это происходит регулярно), все пароли окажутся у злоумышленника. Есть только один правильный способ — хеширование.</p>
+
+      <h2>Почему нельзя хранить пароли как есть</h2>
+
+      <p>Крупные утечки происходят каждый год. Когда база попадает в чужие руки, там оказываются миллионы логинов и паролей. Если пароли хранились в открытом виде — злоумышленник сразу получает доступ ко всему.</p>
+
+      <p>Хуже того: люди часто используют один пароль на разных сайтах. Утечка на одном проекте открывает доступ к почте, соцсетям, банку.</p>
+
+      <blockquote>Правило номер один: пароль пользователя не должен храниться ни в каком виде, кроме хеша. Никаких исключений.</blockquote>
+
+      <h2>Что такое хеш</h2>
+
+      <p>Хеш-функция превращает любую строку в строку фиксированной длины. При этом:</p>
+
+      <ul>
+        <li><strong>В одну сторону.</strong> Из пароля легко получить хеш, но из хеша пароль — почти невозможно.</li>
+        <li><strong>Детерминирована.</strong> Один и тот же пароль всегда даёт один и тот же хеш.</li>
+        <li><strong>Лавинна.</strong> Изменил один символ в пароле — хеш меняется полностью.</li>
+      </ul>
+
+      <p>Пример:</p>
+
+      <pre><code class="language-bash">пароль: 123456
+MD5:    e10adc3949ba59abbe56e057f20f883e
+
+пароль: 123457
+MD5:    885b2c7a6bdabd0f4f9c9bbd8f3a1c1a
+</code></pre>
+
+      <p>Из «e10adc...» вычислить «123456» математически почти невозможно. Значит, если хранить только хеш — утечка базы не раскрывает пароли.</p>
+
+      <h2>Как проверять пароль при входе</h2>
+
+      <p>Пользователь вводит пароль — ты хешируешь его тем же алгоритмом и сравниваешь с хешем в базе. Совпало — пароль верный.</p>
+
+      <pre><code class="language-python">import hashlib
+
+def hash_password(password):
+    # Простой пример — на практике так делать нельзя
+    return hashlib.md5(password.encode()).hexdigest()
+
+# При регистрации
+stored_hash = hash_password('qwerty123')
+# Сохраняем stored_hash в базу
+
+# При входе
+entered = input('Пароль: ')
+if hash_password(entered) == stored_hash:
+    print('Вход разрешён')
+else:
+    print('Неверный пароль')</code></pre>
+
+      <p>Идея правильная, но этот код ещё небезопасен. Продолжаем.</p>
+
+      <h2>Почему MD5 и SHA-1 не подходят</h2>
+
+      <p>MD5 и SHA-1 — быстрые алгоритмы. Это как раз плохо. Быстрые алгоритмы легко подбираются перебором:</p>
+
+      <ul>
+        <li><strong>Радужные таблицы.</strong> Заранее посчитанные хеши для миллионов популярных паролей. Проверяешь свой хеш — сразу находишь пароль.</li>
+        <li><strong>Брутфорс.</strong> Современная видеокарта перебирает миллиарды MD5-хешей в секунду.</li>
+        <li><strong>Утечки похожих баз.</strong> Если такой же хеш уже был в другой утечке — пароль известен.</li>
+      </ul>
+
+      <p>Проверь себя: хеш «e10adc3949ba59abbe56e057f20f883e» гуглится за секунду. Это MD5 от «123456».</p>
+
+      <h2>Что такое соль</h2>
+
+      <p>Соль (salt) — случайная строка, которая добавляется к паролю перед хешированием. У каждого пользователя — своя.</p>
+
+      <pre><code class="language-python">import hashlib
+import os
+
+def hash_password(password):
+    # Генерируем случайную соль — 16 байт
+    salt = os.urandom(16)
+    # Складываем соль и пароль, считаем хеш
+    hashed = hashlib.sha256(salt + password.encode()).hexdigest()
+    # Возвращаем и соль, и хеш — оба надо сохранить в базу
+    return salt.hex() + ':' + hashed
+
+# У Кирилла пароль 'qwerty'
+# Соль: a1b2c3d4...
+# Хеш:  f5e6d7c8...
+
+# У Анны тот же пароль 'qwerty'
+# Соль: 9z8y7x6w...  (другая!)
+# Хеш:  3c4d5e6f...  (тоже другая!)
+</code></pre>
+
+      <p>Даже если у двух пользователей одинаковый пароль — в базе лежат разные хеши. Радужные таблицы бесполезны: злоумышленник не знает соль каждого пользователя.</p>
+
+      <h2>bcrypt, scrypt, argon2</h2>
+
+      <p>Соль решает проблему радужных таблиц, но не брутфорса. Для защиты от него нужны <strong>медленные</strong> хеш-функции. Они специально спроектированы так, чтобы считать хеш долго — сотни миллисекунд.</p>
+
+      <p>Пользователю это не мешает: он вводит пароль раз в день. А злоумышленнику, который хочет перебрать миллиард вариантов, — критично.</p>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Алгоритм</th><th>Особенность</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>MD5, SHA-1</td><td>Не использовать. Слишком быстрые</td></tr>
+          <tr><td>bcrypt</td><td>Стандарт уже 20 лет. Надёжный выбор</td></tr>
+          <tr><td>scrypt</td><td>Требует много памяти — сложнее для GPU</td></tr>
+          <tr><td>argon2</td><td>Победитель конкурса 2015. Современный стандарт</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Правильный код на Python</h2>
+
+      <p>Используем библиотеку <code>bcrypt</code> — она уже умеет и соль, и правильный алгоритм.</p>
+
+      <pre><code class="language-python">import bcrypt
+
+def hash_password(password):
+    # bcrypt сам генерирует соль и включает её в результат
+    # encode нужен, чтобы превратить строку в байты
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+
+def check_password(password, stored_hash):
+    # Проверяем: подходит ли пароль к сохранённому хешу
+    return bcrypt.checkpw(password.encode(), stored_hash)
+
+# Регистрация
+hashed = hash_password('qwerty123')
+# В базе лежит строка типа: $2b$12$...
+
+# Вход
+if check_password('qwerty123', hashed):
+    print('Вход разрешён')
+
+if not check_password('wrongpass', hashed):
+    print('Неверный пароль')</code></pre>
+
+      <p>bcrypt сам заботится о соли — она встроена в итоговый хеш. Тебе не нужно её хранить отдельно.</p>
+
+      <h2>Настройка сложности</h2>
+
+      <p>У bcrypt есть параметр <strong>cost</strong> — сколько раз прогонять алгоритм. Каждая единица увеличивает время в два раза.</p>
+
+      <pre><code class="language-python">import bcrypt
+
+# По умолчанию cost = 12 — примерно 250 мс
+hashed = bcrypt.hashpw(b'secret', bcrypt.gensalt(rounds=12))
+
+# Можно увеличить до 14 — примерно 1 секунда
+hashed2 = bcrypt.hashpw(b'secret', bcrypt.gensalt(rounds=14))</code></pre>
+
+      <p>Оптимально — чтобы проверка одного пароля занимала 100–500 мс. Тогда брутфорс практически невозможен, а пользователь не замечает задержки.</p>
+
+      <h2>Типичные ошибки</h2>
+
+      <ul>
+        <li><strong>Хранить пароль в открытом виде.</strong> Даже «временно». Даже «для отладки».</li>
+        <li><strong>Использовать MD5 или SHA-1.</strong> Сегодня это считается уязвимостью.</li>
+        <li><strong>Одна соль на всех.</strong> Тогда радужные таблицы снова работают.</li>
+        <li><strong>Хешировать пароль на клиенте.</strong> Клиентский JS виден всем. Хеширование — только на сервере.</li>
+        <li><strong>Присылать пароль в письме.</strong> Даже при восстановлении. Только ссылка со сроком жизни.</li>
+        <li><strong>Логировать пароль.</strong> В логах, в трассировке, где угодно — ни в каком виде.</li>
+      </ul>
+
+      <h2>Восстановление пароля</h2>
+
+      <p>Правильный алгоритм восстановления:</p>
+
+      <ol>
+        <li>Пользователь вводит email.</li>
+        <li>Ты генерируешь одноразовый токен (случайная строка), сохраняешь его в базу с временем истечения — например, 30 минут.</li>
+        <li>Отправляешь письмо со ссылкой вида <code>example.com/reset?token=abc123</code>.</li>
+        <li>Пользователь переходит по ссылке, вводит новый пароль.</li>
+        <li>Токен помечается использованным или удаляется.</li>
+      </ol>
+
+      <p><strong>Никогда не присылай сам пароль в письме.</strong> Это значит, что он хранится у тебя в открытом виде — а письма могут читать по пути.</p>
+
+      <h2>Итог</h2>
+
+      <p>Хранить пароли можно только в виде хеша. Используй bcrypt, scrypt или argon2 — медленные алгоритмы со встроенной солью. MD5, SHA-1 и «просто sha256» — не подходят. Восстановление — только через одноразовые токены. Если хочешь глубже про безопасность — смотри <a href="article.html?a=xss-csrf-sql-inekcii">XSS, CSRF, SQL-инъекции</a> и <a href="article.html?a=chto-takoe-jwt-avtorizaciya">JWT и авторизация</a>.</p>
+    `
+  },
+  {
+    slug: "chto-takoe-cors",
+    title: "Что такое CORS и почему браузер блокирует запросы",
+    excerpt: "Почему fetch с одного сайта на другой падает с ошибкой, что такое Same-Origin Policy и как правильно настроить CORS на сервере.",
+    cover: "img/cors.svg",
+    tags: ["Веб", "Безопасность", "API"],
+    date: "2026-04-17",
+    readTime: 10,
+    content: `
+      <p>Классическая ошибка, которую видел каждый веб-разработчик: запрос не проходит, в консоли красное «has been blocked by CORS policy». Что это и почему браузер так делает — разбираем по шагам.</p>
+
+      <h2>Откуда взялась проблема</h2>
+
+      <p>Представь, что ты залогинен в свой банк. Открываешь другую вкладку — на фишинговом сайте. Тот сайт выполняет в фоне запрос:</p>
+
+      <pre><code class="language-javascript">fetch('https://bank.com/api/transfer', {
+  method: 'POST',
+  body: JSON.stringify({ to: 'attacker', amount: 100000 }),
+  credentials: 'include'   // приложить куки банка
+});</code></pre>
+
+      <p>Если браузер не защищён, куки банка автоматически прикладываются к запросу. Банк считает его «легальным» и выполняет перевод. Ты ничего не заметил.</p>
+
+      <p>Именно от этого защищает браузер. Правило называется <strong>Same-Origin Policy</strong> (политика одного источника).</p>
+
+      <h2>Что такое «один источник»</h2>
+
+      <p>Origin (источник) — это комбинация трёх вещей:</p>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Часть</th><th>Пример</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Протокол</td><td>https://</td></tr>
+          <tr><td>Домен</td><td>example.com</td></tr>
+          <tr><td>Порт</td><td>443 (по умолчанию)</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Два URL — «один источник», если у них совпадают все три части. Если хоть одна отличается — источники разные.</p>
+
+      <ul>
+        <li><code>https://site.com</code> и <code>https://site.com/api</code> — <strong>один источник</strong>.</li>
+        <li><code>http://site.com</code> и <code>https://site.com</code> — <strong>разные</strong> (протокол отличается).</li>
+        <li><code>site.com</code> и <code>api.site.com</code> — <strong>разные</strong> (домен отличается).</li>
+        <li><code>site.com</code> и <code>site.com:8080</code> — <strong>разные</strong> (порт отличается).</li>
+      </ul>
+
+      <p>Если запрос идёт на другой origin — браузер по умолчанию его <strong>блокирует</strong>. Если сервер явно не разрешит — то есть не отправит заголовки CORS.</p>
+
+      <h2>Что такое CORS</h2>
+
+      <p>CORS (Cross-Origin Resource Sharing) — механизм, при котором сервер <strong>явно разрешает</strong> запросы с определённых доменов.</p>
+
+      <p>Работает так: браузер перед запросом или вместе с ним отправляет заголовок <code>Origin</code> с адресом сайта-источника. Сервер может ответить:</p>
+
+      <pre><code class="language-bash">Access-Control-Allow-Origin: https://example.com</code></pre>
+
+      <p>Это значит: «разрешаю запросы с этого домена». Если в ответе такого заголовка нет — браузер блокирует ответ.</p>
+
+      <h2>Простой и предварительный запросы</h2>
+
+      <p>Есть два вида CORS-запросов.</p>
+
+      <h3>Простой запрос</h3>
+
+      <p>Отправляется сразу, без дополнительной проверки. Условия:</p>
+
+      <ul>
+        <li>Метод — GET, POST или HEAD.</li>
+        <li>Заголовки только «простые» (без <code>Authorization</code>, <code>Content-Type: application/json</code> и др.).</li>
+        <li>Content-Type — только <code>text/plain</code>, <code>multipart/form-data</code> или <code>application/x-www-form-urlencoded</code>.</li>
+      </ul>
+
+      <p>Всё, что сложнее — уже не «простой» запрос.</p>
+
+      <h3>Предварительный запрос (preflight)</h3>
+
+      <p>Если запрос «сложный» — метод PUT или DELETE, или заголовок <code>Content-Type: application/json</code> — браузер сначала отправляет <strong>OPTIONS-запрос</strong>, чтобы узнать, разрешён ли основной.</p>
+
+      <pre><code class="language-bash">OPTIONS /api/users HTTP/1.1
+Origin: https://example.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: content-type, authorization</code></pre>
+
+      <p>Сервер отвечает:</p>
+
+      <pre><code class="language-bash">HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://example.com
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+Access-Control-Allow-Headers: content-type, authorization
+Access-Control-Max-Age: 86400</code></pre>
+
+      <p>Только после этого браузер отправит основной POST. Если preflight провалился — запрос вообще не уйдёт.</p>
+
+      <p><code>Access-Control-Max-Age: 86400</code> — кэшируем это разрешение на сутки. Следующие запросы в этот период не будут вызывать preflight.</p>
+
+      <h2>Как настроить CORS на сервере</h2>
+
+      <h3>Node.js (Express)</h3>
+
+      <pre><code class="language-javascript">const express = require('express');
+const cors = require('cors');
+const app = express();
+
+// Разрешить запросы только с одного домена
+app.use(cors({
+  origin: 'https://example.com',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true   // разрешить куки
+}));
+
+app.get('/api/users', function(req, res) {
+  res.json([{ id: 1, name: 'Кирилл' }]);
+});
+
+app.listen(3000);</code></pre>
+
+      <h3>Python (FastAPI)</h3>
+
+      <pre><code class="language-python">from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['https://example.com'],
+    allow_methods=['GET', 'POST', 'PUT', 'DELETE'],
+    allow_headers=['Content-Type', 'Authorization'],
+    allow_credentials=True,
+)
+
+@app.get('/api/users')
+def get_users():
+    return [{'id': 1, 'name': 'Кирилл'}]</code></pre>
+
+      <h3>Просто через заголовки</h3>
+
+      <p>Если у тебя не фреймворк, а голый сервер — просто добавь заголовки к ответу:</p>
+
+      <pre><code class="language-python">from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        # Разрешаем запросы с любого домена (для теста!)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(b'{"message": "ok"}')
+
+HTTPServer(('localhost', 8000), Handler).serve_forever()</code></pre>
+
+      <h2>Опасность звёздочки</h2>
+
+      <p>Видел <code>Access-Control-Allow-Origin: *</code>? Это «разрешить всем». Удобно для отладки, но опасно в проде:</p>
+
+      <ul>
+        <li><strong>Любой сайт может дёргать твой API.</strong> В том числе недружественный.</li>
+        <li><strong>Куки не передаются.</strong> С звёздочкой параметр <code>credentials</code> запрещён по спецификации.</li>
+      </ul>
+
+      <p>Правильный подход — явный список разрешённых доменов:</p>
+
+      <pre><code class="language-javascript">const allowedOrigins = [
+  'https://example.com',
+  'https://www.example.com',
+  'https://admin.example.com'
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // Запросы без origin (curl, мобильные приложения) пропускаем
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);   // разрешаем
+    } else {
+      callback(new Error('CORS запрещён'));   // блокируем
+    }
+  }
+}));</code></pre>
+
+      <h2>Почему это только браузерная защита</h2>
+
+      <p>Важно понимать: CORS работает <strong>только в браузере</strong>. Если запрос делает не браузер, а:</p>
+
+      <ul>
+        <li>Postman</li>
+        <li>curl</li>
+        <li>мобильное приложение</li>
+        <li>серверный скрипт</li>
+      </ul>
+
+      <p>— CORS вообще не проверяется. Эти клиенты спокойно делают любые запросы. CORS защищает только пользователя за браузером от других сайтов, которые могли бы действовать от его имени.</p>
+
+      <blockquote>CORS — не защита API от чужих. Это защита браузера пользователя от скриптов на чужих сайтах.</blockquote>
+
+      <h2>Частые ошибки и решения</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Ошибка в консоли</th><th>Причина</th><th>Что делать</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>No Access-Control-Allow-Origin</td><td>Сервер не отправил заголовок</td><td>Настроить CORS на сервере</td></tr>
+          <tr><td>Credentials flag is true, but Access-Control-Allow-Origin is *</td><td>С звёздочкой нельзя куки</td><td>Указать конкретный домен</td></tr>
+          <tr><td>Method PUT is not allowed</td><td>Метод не разрешён в preflight</td><td>Добавить метод в allow_methods</td></tr>
+          <tr><td>Request header field authorization is not allowed</td><td>Заголовок не разрешён</td><td>Добавить его в allow_headers</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Что делать при разработке</h2>
+
+      <p>Когда фронт на <code>localhost:3000</code>, а бэк на <code>localhost:8000</code> — это разные origin. Браузер блокирует. Три решения:</p>
+
+      <ol>
+        <li><strong>Настроить CORS на бэке</strong> — правильный путь.</li>
+        <li><strong>Проксировать запросы через dev-сервер.</strong> Фронт и бэк оказываются на одном origin.</li>
+        <li><strong>Отключить проверку в браузере.</strong> Работает только для отладки, не для прода. Просто не делай так.</li>
+      </ol>
+
+      <h2>Итог</h2>
+
+      <p>CORS — механизм, который защищает пользователя от скриптов с чужих сайтов. Работает только в браузере. Сервер явно указывает, каким доменам разрешены запросы — через заголовки <code>Access-Control-Allow-*</code>. Звёздочка удобна для отладки, но не для продакшена. Если видишь «blocked by CORS» — проблема на сервере, а не в браузере.</p>
+    `
+  },
+  {
+    slug: "docker-compose-dlya-proekta",
+    title: "Docker Compose — несколько контейнеров одной командой",
+    excerpt: "Когда одного Dockerfile мало: как описать приложение, базу и кэш в одном файле и запускать всё одной командой docker compose up.",
+    cover: "img/compose.svg",
+    tags: ["DevOps", "Инструменты", "Разработка"],
+    date: "2026-04-18",
+    readTime: 10,
+    content: `
+      <p>Один контейнер — просто. А если у тебя бэкенд на Python, база PostgreSQL, кэш в Redis и фоновый воркер? Запускать четыре контейнера руками каждый раз — мучение. Docker Compose решает это одним файлом.</p>
+
+      <p>Если ещё не читал основы Docker — начни со статьи <a href="article.html?a=docker-za-10-minut">Docker за 10 минут</a>.</p>
+
+      <h2>Что такое Docker Compose</h2>
+
+      <p>Docker Compose — инструмент, который позволяет описать <strong>несколько контейнеров в одном файле</strong> и управлять ими вместе. Одна команда — и всё приложение поднимается со всеми зависимостями.</p>
+
+      <p>Без Compose нужно было бы:</p>
+
+      <pre><code class="language-bash">docker run -d postgres
+docker run -d redis
+docker run -d --link postgres --link redis my-backend
+# И каждый раз помнить все параметры</code></pre>
+
+      <p>С Compose:</p>
+
+      <pre><code class="language-bash">docker compose up</code></pre>
+
+      <p>Одна строка. Все контейнеры собираются, запускаются и связываются между собой.</p>
+
+      <h2>Файл docker-compose.yml</h2>
+
+      <p>Описывается всё в одном файле в корне проекта. Формат — YAML.</p>
+
+      <pre><code class="language-bash"># Версия формата (в новых версиях Docker можно не указывать)
+version: '3.9'
+
+services:
+  # Приложение на Python
+  backend:
+    build: .                       # собрать из Dockerfile в текущей папке
+    ports:
+      - "8000:8000"                # пробросить порт 8000 наружу
+    environment:                   # переменные окружения
+      - DATABASE_URL=postgresql://user:pass@db:5432/app
+      - REDIS_URL=redis://cache:6379
+    depends_on:                    # порядок запуска
+      - db
+      - cache
+    volumes:
+      - ./src:/app/src             # локальная папка внутрь контейнера
+
+  # База данных
+  db:
+    image: postgres:16             # готовый образ из Docker Hub
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=app
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # сохранить данные
+
+  # Кэш
+  cache:
+    image: redis:7-alpine
+
+# Именованные тома — данные переживают перезапуск
+volumes:
+  pgdata:</code></pre>
+
+      <p>Разберём по частям.</p>
+
+      <h2>services — основные блоки</h2>
+
+      <p>Каждый <code>service</code> — это один контейнер. У него есть имя (в примере: <code>backend</code>, <code>db</code>, <code>cache</code>), которое автоматически становится сетевым адресом.</p>
+
+      <p>Внутри бэкенда можно обращаться к базе по имени сервиса:</p>
+
+      <pre><code class="language-bash">postgresql://user:pass@db:5432/app
+#                    ↑↑
+#                    имя сервиса, а не localhost</code></pre>
+
+      <p>Docker поднимает внутреннюю сеть, в которой все сервисы видят друг друга по именам.</p>
+
+      <h2>build — из своего Dockerfile</h2>
+
+      <p>Для приложения, у которого есть свой код, используется <code>build</code>:</p>
+
+      <pre><code class="language-bash">backend:
+  build: .              # в корне, где Dockerfile
+  # или указать путь
+  build: ./backend
+  # или расширенная настройка
+  build:
+    context: .
+    dockerfile: Dockerfile.prod</code></pre>
+
+      <h2>image — готовый образ</h2>
+
+      <p>Для готовых сервисов — Postgres, Redis, Nginx — используется <code>image</code>:</p>
+
+      <pre><code class="language-bash">db:
+  image: postgres:16     # официальный образ, версия 16
+  image: redis:7-alpine  # Redis 7 на Alpine (маленький образ)</code></pre>
+
+      <h2>ports — доступ снаружи</h2>
+
+      <pre><code class="language-bash">ports:
+  - "8000:8000"    # хост:контейнер
+  - "5432:5432"    # откроем базу наружу для отладки
+  - "80:80"        # веб-сервер</code></pre>
+
+      <p><strong>Важно:</strong> для базы данных наружу порт обычно <strong>не открывают</strong> — это опасно. Оставляй базу доступной только внутри Docker-сети. Для локальной отладки можно открыть, но не на проде.</p>
+
+      <h2>environment — переменные окружения</h2>
+
+      <p>Три способа задать переменные:</p>
+
+      <pre><code class="language-bash"># 1. Список
+environment:
+  - DATABASE_URL=postgresql://user:pass@db:5432/app
+
+# 2. Словарь (эквивалент)
+environment:
+  DATABASE_URL: postgresql://user:pass@db:5432/app
+
+# 3. Из файла .env — самый правильный путь
+env_file:
+  - .env</code></pre>
+
+      <p>Пароли и ключи лучше держать в <code>.env</code> — и обязательно добавить его в <code>.gitignore</code>, чтобы не улетел в GitHub.</p>
+
+      <h2>volumes — постоянное хранилище</h2>
+
+      <p>Контейнеры легко удаляются и создаются заново. Но данные в базе должны оставаться. Для этого есть тома.</p>
+
+      <pre><code class="language-bash">db:
+  volumes:
+    # именованный том — Docker сам управляет
+    - pgdata:/var/lib/postgresql/data
+
+    # прямой маппинг папки с хоста — для разработки
+    - ./migrations:/docker-entrypoint-initdb.d</code></pre>
+
+      <p>Два вида:</p>
+
+      <ul>
+        <li><strong>Именованные тома</strong> (<code>pgdata:/path</code>) — живут на хосте, переживают перезапуск. Данные базы.</li>
+        <li><strong>Bind mounts</strong> (<code>./src:/app/src</code>) — прямая связь с локальной папкой. Изменения в коде сразу видны в контейнере. Для разработки.</li>
+      </ul>
+
+      <h2>depends_on — порядок запуска</h2>
+
+      <pre><code class="language-bash">backend:
+  depends_on:
+    - db
+    - cache</code></pre>
+
+      <p>Docker запустит <code>db</code> и <code>cache</code> первыми. Но не ждёт их полной готовности — только старта контейнера. Если твоё приложение сразу дёргает базу, а Postgres ещё не готов, оно упадёт.</p>
+
+      <p>Решение — healthcheck:</p>
+
+      <pre><code class="language-bash">db:
+  image: postgres:16
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U user"]
+    interval: 5s
+    timeout: 5s
+    retries: 5
+
+backend:
+  depends_on:
+    db:
+      condition: service_healthy   # ждать готовности базы</code></pre>
+
+      <h2>Основные команды</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Команда</th><th>Что делает</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>docker compose up</td><td>Запустить всё</td></tr>
+          <tr><td>docker compose up -d</td><td>Запустить в фоне</td></tr>
+          <tr><td>docker compose up --build</td><td>Пересобрать образы и запустить</td></tr>
+          <tr><td>docker compose down</td><td>Остановить и удалить контейнеры</td></tr>
+          <tr><td>docker compose down -v</td><td>То же + удалить тома (данные)</td></tr>
+          <tr><td>docker compose ps</td><td>Список запущенных</td></tr>
+          <tr><td>docker compose logs -f backend</td><td>Логи сервиса в реальном времени</td></tr>
+          <tr><td>docker compose exec backend bash</td><td>Зайти внутрь контейнера</td></tr>
+          <tr><td>docker compose restart backend</td><td>Перезапустить один сервис</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Пример для реального проекта</h2>
+
+      <p>Типичная архитектура веб-приложения:</p>
+
+      <pre><code class="language-bash">version: '3.9'
+
+services:
+  # Веб-фронт на Nginx
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  # API на FastAPI
+  backend:
+    build: ./backend
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/app
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    volumes:
+      - ./backend:/app
+
+  # Фоновый воркер (та же база кода, другая команда)
+  worker:
+    build: ./backend
+    command: python worker.py
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/app
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      - backend
+      - db
+      - cache
+
+  # База
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: app
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 5s
+      retries: 5
+
+  # Кэш
+  cache:
+    image: redis:7-alpine
+
+volumes:
+  pgdata:</code></pre>
+
+      <p>Тут пять сервисов. Одной командой <code>docker compose up</code> поднимается вся инфраструктура: фронт, бэк, воркер, база, кэш. Внутри — все связаны правильными URL.</p>
+
+      <h2>Что НЕ надо делать</h2>
+
+      <ul>
+        <li><strong>Хранить пароли прямо в файле.</strong> Через <code>.env</code> — правильно.</li>
+        <li><strong>Открывать порт базы наружу.</strong> Только если правда надо для отладки.</li>
+        <li><strong>Использовать <code>latest</code> в теге образа.</strong> Завтра обновится — сломается. Указывай конкретную версию: <code>postgres:16</code>.</li>
+        <li><strong>Писать все сервисы в один.</strong> Если можно разделить — разделяй. Это и есть смысл Compose.</li>
+      </ul>
+
+      <h2>Compose vs Kubernetes</h2>
+
+      <p>Docker Compose — для <strong>одной машины</strong>, локальной разработки или маленького сервера. Kubernetes — для больших продакшн-систем с десятками серверов.</p>
+
+      <p>Для 90% проектов Compose хватит с головой. Не беги в Kubernetes, пока не упрёшься в возможности Compose.</p>
+
+      <h2>Итог</h2>
+
+      <p>Docker Compose описывает несколько контейнеров в одном файле. Одна команда — весь проект. Volumes хранят данные, environment задаёт настройки, depends_on выстраивает порядок, healthcheck защищает от гонки при запуске. Стандарт для локальной разработки и небольших продакшн-развёртываний.</p>
+    `
+  },
+  {
+    slug: "dekoratory-v-python",
+    title: "Декораторы в Python — что это и зачем нужны",
+    excerpt: "Функции, которые оборачивают другие функции. Разбираем декораторы с нуля: синтаксис, как работают, где применяются на практике.",
+    cover: "img/decorators.svg",
+    tags: ["Python", "Разработка", "Теория"],
+    date: "2026-04-19",
+    readTime: 11,
+    content: `
+      <p>Декораторы в Python — одна из тех вещей, которые сначала пугают, а потом становятся любимым инструментом. Это способ обернуть функцию в другую функцию, не меняя её код. Разберём по шагам.</p>
+
+      <h2>Функции — это объекты</h2>
+
+      <p>Прежде чем понять декораторы, надо запомнить одну вещь: <strong>в Python функция — это объект</strong>, как число или строка. Её можно:</p>
+
+      <ul>
+        <li>Присвоить переменной.</li>
+        <li>Передать в другую функцию как аргумент.</li>
+        <li>Вернуть из функции.</li>
+      </ul>
+
+      <pre><code class="language-python">def greet(name):
+    return 'Привет, ' + name
+
+# Присваиваем функцию переменной
+hello = greet
+print(hello('Кирилл'))   # Привет, Кирилл
+
+# Передаём как аргумент
+def call_function(func, arg):
+    return func(arg)
+
+print(call_function(greet, 'Анна'))   # Привет, Анна
+
+# Возвращаем из функции
+def make_greeter():
+    def inner(name):
+        return 'Здравствуй, ' + name
+    return inner
+
+greeter = make_greeter()
+print(greeter('Иван'))   # Здравствуй, Иван</code></pre>
+
+      <p>Эта способность — <strong>основа декораторов</strong>. Запомни её — дальше всё будет логично.</p>
+
+      <h2>Первый пример: обёртка</h2>
+
+      <p>Хотим узнать, сколько времени работает функция. Можно вписать замеры прямо в неё, но если функций много — код повторяется.</p>
+
+      <p>Лучше написать функцию-обёртку:</p>
+
+      <pre><code class="language-python">import time
+
+def measure_time(func):
+    # Внутренняя функция — заменяет исходную
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        # Вызываем исходную функцию со всеми её аргументами
+        result = func(*args, **kwargs)
+        elapsed = time.time() - start
+        print(func.__name__ + ' работала ' + str(round(elapsed, 4)) + ' сек')
+        return result
+    return wrapper
+
+# Оборачиваем функцию вручную
+def slow_sum(n):
+    total = 0
+    for i in range(n):
+        total += i
+    return total
+
+slow_sum = measure_time(slow_sum)
+slow_sum(1000000)
+# Выведет: slow_sum работала 0.0412 сек</code></pre>
+
+      <p>Мы заменили <code>slow_sum</code> на <code>wrapper</code>, который внутри вызывает оригинал и добавляет замер времени. Функция работает по-старому, но с новой фичей.</p>
+
+      <h2>Синтаксис декоратора</h2>
+
+      <p>Оборачивать руками неудобно. Есть специальный синтаксис — <code>@имя_декоратора</code> над функцией.</p>
+
+      <pre><code class="language-python">import time
+
+def measure_time(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        elapsed = time.time() - start
+        print(func.__name__ + ' работала ' + str(round(elapsed, 4)) + ' сек')
+        return result
+    return wrapper
+
+# То же самое, что slow_sum = measure_time(slow_sum)
+@measure_time
+def slow_sum(n):
+    total = 0
+    for i in range(n):
+        total += i
+    return total
+
+slow_sum(1000000)
+# Выведет: slow_sum работала 0.0412 сек</code></pre>
+
+      <p>Строка <code>@measure_time</code> — это просто сокращение. Python автоматически применяет декоратор к функции ниже.</p>
+
+      <blockquote>Декоратор — это функция, которая принимает одну функцию и возвращает другую. Всё. Ничего магического.</blockquote>
+
+      <h2>Что значат *args и **kwargs</h2>
+
+      <p>Внутри <code>wrapper</code> мы не знаем, какие аргументы будут у оборачиваемой функции. Поэтому используем:</p>
+
+      <ul>
+        <li><code>*args</code> — все позиционные аргументы как кортеж.</li>
+        <li><code>**kwargs</code> — все именованные аргументы как словарь.</li>
+      </ul>
+
+      <pre><code class="language-python">def wrapper(*args, **kwargs):
+    # args — кортеж позиционных аргументов
+    # kwargs — словарь именованных
+    return func(*args, **kwargs)   # передаём все дальше</code></pre>
+
+      <p>Это универсальный приём: обёртка работает с любой функцией, независимо от её сигнатуры.</p>
+
+      <h2>Декоратор с параметрами</h2>
+
+      <p>Иногда нужно передать настройки в декоратор. Например, «повторять функцию N раз при ошибке».</p>
+
+      <pre><code class="language-python">import time
+
+def retry(attempts):
+    # Внешняя функция принимает параметр декоратора
+    def decorator(func):
+        # Средняя функция принимает саму функцию
+        def wrapper(*args, **kwargs):
+            # Внутренняя — оборачивает вызов
+            for i in range(attempts):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    if i == attempts - 1:
+                        raise   # последняя попытка — пробрасываем ошибку
+                    print('Попытка ' + str(i + 1) + ' упала, пробуем снова')
+                    time.sleep(1)
+        return wrapper
+    return decorator
+
+@retry(attempts=3)
+def unstable_request():
+    # Тут могла бы быть функция, которая иногда падает
+    print('Пробуем выполнить запрос')
+    raise ConnectionError('Сеть недоступна')
+
+unstable_request()</code></pre>
+
+      <p>Получается три уровня вложенности:</p>
+
+      <ol>
+        <li><code>retry(attempts)</code> — принимает параметры декоратора.</li>
+        <li><code>decorator(func)</code> — принимает функцию.</li>
+        <li><code>wrapper(*args)</code> — принимает аргументы вызова.</li>
+      </ol>
+
+      <p>С первого раза сложно, но это самый частый паттерн в реальном коде.</p>
+
+      <h2>functools.wraps — важная деталь</h2>
+
+      <p>После оборачивания функция теряет свои метаданные: имя, docstring, документацию.</p>
+
+      <pre><code class="language-python">@measure_time
+def greet(name):
+    'Возвращает приветствие'
+    return 'Привет, ' + name
+
+print(greet.__name__)   # wrapper, а не greet!
+print(greet.__doc__)    # None, а не 'Возвращает приветствие'</code></pre>
+
+      <p>Решается декоратором <code>functools.wraps</code>:</p>
+
+      <pre><code class="language-python">import functools
+import time
+
+def measure_time(func):
+    @functools.wraps(func)   # сохраняем метаданные
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        print(func.__name__ + ': ' + str(round(time.time() - start, 4)) + ' сек')
+        return result
+    return wrapper
+
+@measure_time
+def greet(name):
+    'Возвращает приветствие'
+    return 'Привет, ' + name
+
+print(greet.__name__)   # greet
+print(greet.__doc__)    # Возвращает приветствие</code></pre>
+
+      <p>Всегда добавляй <code>@functools.wraps</code> к своим wrapper'ам. Это привычка хорошего тона.</p>
+
+      <h2>Где применяются декораторы</h2>
+
+      <h3>Веб-фреймворки</h3>
+
+      <p>FastAPI, Flask, Django — везде декораторы связывают URL с функцией:</p>
+
+      <pre><code class="language-python">from flask import Flask
+app = Flask(__name__)
+
+@app.route('/users')
+def get_users():
+    return [{'id': 1, 'name': 'Кирилл'}]
+
+# При заходе на /users Flask вызовет эту функцию</code></pre>
+
+      <h3>Кэширование</h3>
+
+      <pre><code class="language-python">import functools
+
+@functools.lru_cache(maxsize=128)
+def fibonacci(n):
+    if n < 2:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+# Первый вызов для n=50 — мгновенно благодаря кэшу
+print(fibonacci(50))</code></pre>
+
+      <p><code>lru_cache</code> — встроенный декоратор. Он запоминает результаты вызовов и отдаёт их из памяти при повторе. Огромное ускорение для рекурсивных функций.</p>
+
+      <h3>Аутентификация</h3>
+
+      <pre><code class="language-python">def require_auth(func):
+    @functools.wraps(func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user:
+            raise PermissionError('Нужна авторизация')
+        return func(request, *args, **kwargs)
+    return wrapper
+
+@require_auth
+def delete_post(request, post_id):
+    # Попадём сюда только если пользователь авторизован
+    return 'Пост удалён'</code></pre>
+
+      <h3>Логирование</h3>
+
+      <pre><code class="language-python">def log_call(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        print('Вызов: ' + func.__name__)
+        return func(*args, **kwargs)
+    return wrapper
+
+@log_call
+def process_order(order_id):
+    return 'Заказ ' + str(order_id) + ' обработан'
+
+process_order(42)
+# Выведет: Вызов: process_order
+# Затем: Заказ 42 обработан</code></pre>
+
+      <h2>Встроенные декораторы</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Декоратор</th><th>Что делает</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>@property</td><td>Превращает метод в атрибут</td></tr>
+          <tr><td>@staticmethod</td><td>Метод без self</td></tr>
+          <tr><td>@classmethod</td><td>Метод, принимающий класс вместо экземпляра</td></tr>
+          <tr><td>@functools.lru_cache</td><td>Кэширует результаты</td></tr>
+          <tr><td>@functools.wraps</td><td>Сохраняет метаданные в декораторах</td></tr>
+          <tr><td>@dataclass</td><td>Автоматически создаёт init, repr, eq</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Частые ошибки</h2>
+
+      <ul>
+        <li><strong>Забыть <code>return func(*args, **kwargs)</code>.</strong> Тогда оборачиваемая функция не выполнится.</li>
+        <li><strong>Забыть <code>return wrapper</code>.</strong> Декоратор вернёт None, и функция исчезнет.</li>
+        <li><strong>Не использовать <code>functools.wraps</code>.</strong> Теряются имя и docstring.</li>
+        <li><strong>Путать уровни вложенности.</strong> Декоратор без параметров — 2 уровня. С параметрами — 3.</li>
+      </ul>
+
+      <h2>Итог</h2>
+
+      <p>Декоратор — это функция, которая оборачивает другую функцию. Работает через способность Python возвращать функции из функций. Применяется в фреймворках, кэшировании, аутентификации, логировании. Синтаксис <code>@имя</code> — просто сокращение. Не забывай про <code>functools.wraps</code> и <code>*args, **kwargs</code>. Как только поймёшь декораторы — код станет заметно короче.</p>
+    `
+  }
 ];
