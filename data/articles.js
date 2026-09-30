@@ -9038,5 +9038,1027 @@ button.addEventListener('click', function() {
 
       <p>Singleton — один объект на всю программу. Factory — централизованное создание объектов с выбором класса. Observer — подписка на события, слабая связанность. Все три встречаются в реальном коде постоянно. Изучить их стоит — но применять только тогда, когда это упрощает, а не усложняет.</p>
     `
+  },
+     {
+    slug: "obrabotka-isklyucheniy-v-python",
+    title: "Обработка исключений в Python — try, except, finally",
+    excerpt: "Как ловить ошибки и не давать программе падать. Разбираем try/except, собственные исключения и контекстные менеджеры с примерами.",
+    cover: "img/python-errors.svg",
+    tags: ["Python", "Разработка", "Теория"],
+    date: "2026-04-24",
+    readTime: 11,
+    content: `
+      <p>Программа всегда может столкнуться с неожиданностью: файл не найден, пользователь ввёл не то, сеть пропала. Если не обрабатывать ошибки — программа упадёт. Python даёт удобный механизм для этого — исключения.</p>
+
+      <h2>Что такое исключение</h2>
+
+      <p>Исключение (exception) — это сигнал, что во время выполнения что-то пошло не так. Python «бросает» исключение, и если его никто не поймал — программа аварийно завершается.</p>
+
+      <pre><code class="language-python"># Программа упадёт с ошибкой
+result = 10 / 0
+# ZeroDivisionError: division by zero
+
+numbers = [1, 2, 3]
+print(numbers[10])
+# IndexError: list index out of range</code></pre>
+
+      <p>Обе ошибки — исключения. Python сообщает, что именно произошло, и останавливает выполнение, если никто ошибку не перехватил.</p>
+
+      <h2>try / except — базовый синтаксис</h2>
+
+      <p>Чтобы программа не падала, опасный код оборачивают в <code>try</code>. Если внутри возникает ошибка — управление переходит в <code>except</code>.</p>
+
+      <pre><code class="language-python">try:
+    result = 10 / 0
+    print('Результат:', result)
+except ZeroDivisionError:
+    print('На ноль делить нельзя!')
+
+print('Программа продолжает работу')</code></pre>
+
+      <p>Программа выведет:
+      «На ноль делить нельзя!»
+      «Программа продолжает работу»
+      — и не упадёт.</p>
+
+      <h2>Ловить разные ошибки отдельно</h2>
+
+      <p>Можно обрабатывать разные типы исключений по-разному:</p>
+
+      <pre><code class="language-python">try:
+    numbers = [1, 2, 3]
+    index = int(input('Какой индекс показать? '))
+    print(numbers[index])
+except ValueError:
+    print('Это не число')
+except IndexError:
+    print('Такого индекса нет в списке')</code></pre>
+
+      <p>Python сам определит, какое исключение возникло, и вызовет соответствующий блок <code>except</code>.</p>
+
+      <h2>Получить объект ошибки</h2>
+
+      <p>Иногда надо знать подробности ошибки. Синтаксис <code>as</code> сохраняет объект исключения:</p>
+
+      <pre><code class="language-python">try:
+    result = 10 / 0
+except ZeroDivisionError as error:
+    print('Ошибка:', error)
+    print('Тип:', type(error).__name__)</code></pre>
+
+      <p>Из объекта можно получить текст сообщения, тип, трассировку — всё, что полезно для логов.</p>
+
+      <h2>Ловить всё подряд</h2>
+
+      <p>Можно ловить любое исключение через <code>except Exception</code>:</p>
+
+      <pre><code class="language-python">try:
+    result = do_something_risky()
+except Exception as error:
+    print('Что-то пошло не так:', error)</code></pre>
+
+      <p>Это работает, но <strong>не рекомендую</strong> использовать в обычном коде. Ловить всё подряд — значит скрывать реальные проблемы. Если ты не знаешь, что именно может упасть, — узнай и лови точечно.</p>
+
+      <blockquote>Лови конкретные исключения. Ловить всё подряд — значит маскировать баги, которые потом будет сложно отыскать.</blockquote>
+
+      <h2>else и finally</h2>
+
+      <p>Полная форма try имеет четыре блока:</p>
+
+      <ul>
+        <li><code>try</code> — опасный код.</li>
+        <li><code>except</code> — что делать при ошибке.</li>
+        <li><code>else</code> — что делать, если ошибки не было.</li>
+        <li><code>finally</code> — что делать в любом случае.</li>
+      </ul>
+
+      <pre><code class="language-python">try:
+    f = open('data.txt', 'r')
+    content = f.read()
+except FileNotFoundError:
+    print('Файл не найден')
+else:
+    # Сюда попадём только если ошибки не было
+    print('Прочитано символов:', len(content))
+finally:
+    # Сюда попадём в любом случае — была ошибка или нет
+    print('Работа с файлом завершена')</code></pre>
+
+      <p><code>finally</code> — идеальное место для закрытия файлов, соединений, освобождения ресурсов.</p>
+
+      <h2>Собственные исключения</h2>
+
+      <p>Можно создавать свои классы исключений. Это делает код понятнее — по типу ошибки сразу видно, что пошло не так.</p>
+
+      <pre><code class="language-python"># Своё исключение — наследник Exception
+class InsufficientFundsError(Exception):
+    pass
+
+class BankAccount:
+    def __init__(self, balance):
+        self.balance = balance
+
+    def withdraw(self, amount):
+        if amount &gt; self.balance:
+            # Бросаем наше исключение
+            raise InsufficientFundsError(
+                'Недостаточно средств: нужно ' + str(amount) +
+                ', доступно ' + str(self.balance)
+            )
+        self.balance -= amount
+        return amount
+
+# Использование
+account = BankAccount(1000)
+
+try:
+    account.withdraw(5000)
+except InsufficientFundsError as error:
+    print('Ошибка:', error)</code></pre>
+
+      <p>Своё исключение превращает непонятное «что-то упало» в конкретную бизнес-ошибку.</p>
+
+      <h2>Ключевое слово raise</h2>
+
+      <p><code>raise</code> — бросает исключение вручную. Три способа применения:</p>
+
+      <pre><code class="language-python"># 1. Бросить новое исключение
+raise ValueError('Некорректное значение')
+
+# 2. Пробросить дальше уже пойманное
+try:
+    do_something()
+except SomeError:
+    log_error()
+    raise   # пробрасываем то же исключение выше
+
+# 3. Заменить на другое
+try:
+    do_something()
+except SomeError as error:
+    raise RuntimeError('Сбой обработки') from error</code></pre>
+
+      <p>Третий вариант хорош тем, что сохраняет связь с исходной ошибкой — в трассировке будет видно обе.</p>
+
+      <h2>Контекстные менеджеры</h2>
+
+      <p>Конструкция <code>with</code> — удобная альтернатива try/finally для работы с ресурсами. Она сама закроет файл, даже если внутри произойдёт ошибка:</p>
+
+      <pre><code class="language-python"># Плохо — надо не забыть закрыть
+f = open('data.txt')
+try:
+    content = f.read()
+finally:
+    f.close()
+
+# Хорошо — with закроет сам
+with open('data.txt') as f:
+    content = f.read()
+# После выхода из блока файл закрыт</code></pre>
+
+      <p>Работает с любыми объектами, у которых есть методы <code>__enter__</code> и <code>__exit__</code>. Например, с соединениями базы данных, блокировками, временными файлами.</p>
+
+      <h2>Практический пример: безопасное чтение числа</h2>
+
+      <pre><code class="language-python">def read_number(prompt):
+    'Просит пользователя ввести число, повторяет при ошибке'
+    while True:
+        try:
+            value = int(input(prompt))
+            return value
+        except ValueError:
+            print('Это не число. Попробуй ещё раз.')
+
+age = read_number('Сколько тебе лет? ')
+print('Через 10 лет будет:', age + 10)</code></pre>
+
+      <p>Пользователь может ошибаться сколько угодно — программа не упадёт. Такой паттерн используется везде, где ввод от человека.</p>
+
+      <h2>Частые ошибки</h2>
+
+      <ul>
+        <li><strong>Ловить всё через <code>except Exception</code>.</strong> Скрывает баги. Лови конкретные типы.</li>
+        <li><strong>Пустой <code>except:</code> без переменной.</strong> «Проглотить» ошибку молча — худший вариант. В логах должна остаться информация.</li>
+        <li><strong>Слишком широкий try.</strong> Оборачивай только опасный код, а не 50 строк вокруг.</li>
+        <li><strong>Не закрыть ресурс.</strong> Всегда используй <code>with</code> или <code>finally</code>.</li>
+        <li><strong>Игнорировать ошибку.</strong> Если не знаешь, что делать с исключением — не лови его. Пусть поднимется выше, где с ним разберутся осмысленно.</li>
+      </ul>
+
+      <h2>Как читать трассировку</h2>
+
+      <p>Когда исключение не поймано, Python печатает трассировку. Читать её надо снизу вверх:</p>
+
+      <pre><code class="language-bash">Traceback (most recent call last):
+  File "app.py", line 10, in &lt;module&gt;
+    process_user(user)
+  File "app.py", line 6, in process_user
+    return user['email']
+KeyError: 'email'</code></pre>
+
+      <p>Снизу — тип ошибки (<code>KeyError: 'email'</code>). Выше — цепочка вызовов. Самое важное: первая строка файла с ошибкой — та, где реально что-то сломалось.</p>
+
+      <h2>Итог</h2>
+
+      <p>Исключения — способ не дать программе падать и осмысленно обрабатывать ошибки. Основные конструкции: <code>try</code>, <code>except</code>, <code>else</code>, <code>finally</code>. Лови конкретные типы, не всё подряд. Создавай свои исключения для бизнес-ошибок. Работай с ресурсами через <code>with</code>. Не молчи, если ошибка случилась — пиши в лог. И не забывай: если не знаешь, что делать с ошибкой — не лови её.</p>
+    `
+  },
+  {
+    slug: "bash-skripty-dlya-novichka",
+    title: "Bash-скрипты для новичка — автоматизация на Linux",
+    excerpt: "Как написать первый скрипт, который автоматизирует рутину: переменные, условия, циклы, функции, аргументы командной строки.",
+    cover: "img/bash.svg",
+    tags: ["Инструменты", "DevOps", "Разработка"],
+    date: "2026-04-25",
+    readTime: 11,
+    content: `
+      <p>Bash-скрипт — это обычный текстовый файл с командами, которые выполняются по очереди. Пишешь один раз — запускаешь одной командой. Идеально для рутины: сборка, деплой, бэкапы, работа с логами.</p>
+
+      <p>Если ещё не читал про <a href="article.html?a=osnovy-linux-dlya-razrabotchika">основы Linux</a> — начни с той статьи, там база по терминалу.</p>
+
+      <h2>Первый скрипт</h2>
+
+      <p>Создай файл <code>hello.sh</code> и вставь:</p>
+
+      <pre><code class="language-bash">#!/bin/bash
+# Это комментарий
+
+echo "Привет, мир!"
+echo "Сейчас $(date)"
+echo "Ты находишься в $(pwd)"</code></pre>
+
+      <p>Разбери по частям:</p>
+
+      <ul>
+        <li><strong>#!/bin/bash</strong> — shebang. Говорит системе: «запускай этот файл через bash».</li>
+        <li><strong>echo</strong> — вывести на экран.</li>
+        <li><strong>$(команда)</strong> — подставить результат команды в строку.</li>
+        <li><strong>#</strong> — комментарий. Bash его игнорирует.</li>
+      </ul>
+
+      <p>Запусти:</p>
+
+      <pre><code class="language-bash"># Сделать исполняемым
+chmod +x hello.sh
+
+# Запустить
+./hello.sh</code></pre>
+
+      <p>Без <code>chmod +x</code> не запустится — система не знает, что файл можно исполнять.</p>
+
+      <h2>Переменные</h2>
+
+      <p>Переменные в bash создаются без ключевых слов. При обращении — знак доллара в начале.</p>
+
+      <pre><code class="language-bash">#!/bin/bash
+
+# Создание переменной (без пробелов вокруг =)
+name="Кирилл"
+age=30
+project="/home/user/myapp"
+
+echo "Привет, $name!"
+echo "Тебе $age лет"
+echo "Проект лежит в $project"
+
+# Значение по умолчанию, если переменная не задана
+folder="${BACKUP_DIR:-/tmp/backup}"
+echo "Папка для бэкапа: $folder"</code></pre>
+
+      <p>Обрати внимание: <code>name="Кирилл"</code> — без пробелов. <code>name = "Кирилл"</code> с пробелами не сработает.</p>
+
+      <p>Фигурные скобки <code>${name}</code> нужны, когда переменная соседствует с текстом: <code>${name}world</code> — иначе bash подумает, что переменная называется <code>nameworld</code>.</p>
+
+      <h2>Аргументы командной строки</h2>
+
+      <p>Скрипт может принимать параметры. Они доступны через <code>$1</code>, <code>$2</code> и так далее.</p>
+
+      <pre><code class="language-bash">#!/bin/bash
+
+echo "Первый аргумент: $1"
+echo "Второй аргумент: $2"
+echo "Всего аргументов: $#"
+echo "Все аргументы одной строкой: $@"</code></pre>
+
+      <pre><code class="language-bash">./script.sh привет мир
+# Первый аргумент: привет
+# Второй аргумент: мир
+# Всего аргументов: 2
+# Все аргументы одной строкой: привет мир</code></pre>
+
+      <p>Специальные переменные: <code>$0</code> — имя скрипта, <code>$#</code> — количество аргументов, <code>$@</code> — все аргументы как список.</p>
+
+      <h2>Условия</h2>
+
+      <p>Проверка условий — через <code>if</code> и квадратные скобки:</p>
+
+      <pre><code class="language-bash">#!/bin/bash
+
+age=20
+
+if [ "$age" -ge 18 ]; then
+    echo "Совершеннолетний"
+else
+    echo "Несовершеннолетний"
+fi</code></pre>
+
+      <p>Основные операторы:</p>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Оператор</th><th>Значение</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>-eq</td><td>равно (числа)</td></tr>
+          <tr><td>-ne</td><td>не равно (числа)</td></tr>
+          <tr><td>-gt</td><td>больше</td></tr>
+          <tr><td>-lt</td><td>меньше</td></tr>
+          <tr><td>-ge</td><td>больше или равно</td></tr>
+          <tr><td>-le</td><td>меньше или равно</td></tr>
+          <tr><td>=</td><td>равно (строки)</td></tr>
+          <tr><td>!=</td><td>не равно (строки)</td></tr>
+          <tr><td>-z</td><td>строка пустая</td></tr>
+          <tr><td>-n</td><td>строка не пустая</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Проверка файлов и папок:</p>
+
+      <pre><code class="language-bash">if [ -f "data.txt" ]; then
+    echo "Файл существует"
+fi
+
+if [ -d "/var/log" ]; then
+    echo "Папка существует"
+fi
+
+if [ ! -f "config.yml" ]; then
+    echo "Файл конфига не найден — создайте его"
+    exit 1
+fi</code></pre>
+
+      <p><code>-f</code> — обычный файл, <code>-d</code> — папка, <code>!</code> перед — отрицание.</p>
+
+      <h2>Циклы</h2>
+
+      <p>Два основных вида: по списку и пока условие истинно.</p>
+
+      <pre><code class="language-bash"># Цикл по значениям
+for fruit in яблоко банан груша; do
+    echo "Фрукт: $fruit"
+done
+
+# Цикл по файлам в папке
+for file in *.txt; do
+    echo "Обрабатываю: $file"
+done
+
+# Цикл по числам
+for i in {1..5}; do
+    echo "Итерация $i"
+done
+
+# Пока условие истинно
+counter=0
+while [ $counter -lt 5 ]; do
+    echo "Счётчик: $counter"
+    counter=$((counter + 1))
+done</code></pre>
+
+      <p><code>{1..5}</code> разворачивается в 1 2 3 4 5. <code>$((выражение))</code> — арифметика.</p>
+
+      <h2>Функции</h2>
+
+      <pre><code class="language-bash">#!/bin/bash
+
+# Объявление функции
+greet() {
+    local name=$1   # локальная переменная — видна только внутри
+    echo "Привет, $name!"
+}
+
+# Функция с возвратом значения
+sum() {
+    local a=$1
+    local b=$2
+    echo $((a + b))   # возвращаем через echo
+}
+
+# Вызов
+greet "Кирилл"
+
+result=$(sum 3 5)
+echo "3 + 5 = $result"</code></pre>
+
+      <p>Функции в bash не возвращают значения как в Python. Возврат — через <code>echo</code>, а вызывающий забирает результат через <code>$(...)</code>.</p>
+
+      <h2>Пример: скрипт бэкапа</h2>
+
+      <p>Соберём всё вместе. Скрипт архивирует папку проекта в директорию бэкапов:</p>
+
+      <pre><code class="language-bash">#!/bin/bash
+
+# Настройки
+PROJECT_DIR="/home/user/myapp"
+BACKUP_DIR="/home/user/backups"
+DATE=$(date +%Y-%m-%d_%H-%M)
+
+# Проверяем, что папка проекта существует
+if [ ! -d "$PROJECT_DIR" ]; then
+    echo "Ошибка: папка $PROJECT_DIR не найдена"
+    exit 1
+fi
+
+# Создаём папку для бэкапов, если её нет
+mkdir -p "$BACKUP_DIR"
+
+# Имя архива
+FILENAME="$BACKUP_DIR/backup_$DATE.tar.gz"
+
+# Архивируем
+tar -czf "$FILENAME" "$PROJECT_DIR"
+
+# Проверяем, что архив создан
+if [ -f "$FILENAME" ]; then
+    size=$(du -h "$FILENAME" | cut -f1)
+    echo "Готово: $FILENAME ($size)"
+else
+    echo "Ошибка при создании архива"
+    exit 1
+fi</code></pre>
+
+      <p>Запусти — получишь архив с датой в имени. Такую штуку можно поставить в cron и забыть про ручное бэкапирование.</p>
+
+      <h2>Проверка результата команд</h2>
+
+      <p>Каждая команда возвращает код возврата: 0 — успех, не ноль — ошибка. Он доступен в переменной <code>$?</code>.</p>
+
+      <pre><code class="language-bash">cp important.txt /backup/
+
+if [ $? -eq 0 ]; then
+    echo "Копирование прошло успешно"
+else
+    echo "Не удалось скопировать файл"
+fi</code></pre>
+
+      <p>Или короче — через <code>&amp;&amp;</code> и <code>||</code>:</p>
+
+      <pre><code class="language-bash">cp important.txt /backup/ &amp;&amp; echo "Готово" || echo "Ошибка"</code></pre>
+
+      <p><code>&amp;&amp;</code> — выполнить следующее, если предыдущее успешно. <code>||</code> — если упало.</p>
+
+      <h2>Отладка</h2>
+
+      <p>Если скрипт ведёт себя странно — запусти его с флагом <code>-x</code>. Bash будет печатать каждую строку перед выполнением:</p>
+
+      <pre><code class="language-bash">bash -x script.sh</code></pre>
+
+      <p>Ещё вариант — добавить в начало скрипта:</p>
+
+      <pre><code class="language-bash">#!/bin/bash
+set -e   # остановиться при первой ошибке
+set -u   # ругаться на неопределённые переменные
+set -o pipefail   # ошибка в пайпе = ошибка всей цепочки</code></pre>
+
+      <p>Эти три строки — стандарт для серьёзных скриптов. Они делают поведение более предсказуемым.</p>
+
+      <h2>Полезные приёмы</h2>
+
+      <pre><code class="language-bash"># Проверка, что запущено с root-правами
+if [ "$EUID" -ne 0 ]; then
+    echo "Запусти через sudo"
+    exit 1
+fi
+
+# Спросить подтверждение
+read -p "Удалить файл? (y/n): " answer
+if [ "$answer" = "y" ]; then
+    rm important.txt
+fi
+
+# Пройти по строкам файла
+while IFS= read -r line; do
+    echo "Строка: $line"
+done &lt; data.txt
+
+# Отправить письмо при ошибке
+./deploy.sh || echo "Деплой упал" | mail -s "Проблема" admin@example.com</code></pre>
+
+      <h2>Итог</h2>
+
+      <p>Bash-скрипт — текстовый файл с командами. Переменные без ключевых слов, условия через <code>if [ ... ]</code>, циклы через <code>for</code> и <code>while</code>. Аргументы приходят в <code>$1</code>, <code>$2</code>. Функции возвращают результат через <code>echo</code>. Три флага <code>set -euo pipefail</code> делают скрипты предсказуемее. Идеальная задача для первого скрипта — бэкап, деплой или ротация логов.</p>
+    `
+  },
+  {
+    slug: "chto-takoe-nginx",
+    title: "Что такое Nginx и зачем он нужен на сервере",
+    excerpt: "Почему почти все сайты работают через Nginx. Разбираем: веб-сервер, reverse proxy, балансировка нагрузки, статика и конфиги.",
+    cover: "img/nginx.svg",
+    tags: ["DevOps", "Веб", "Инструменты"],
+    date: "2026-04-26",
+    readTime: 10,
+    content: `
+      <p>Когда ты открываешь любой крупный сайт — где-то на их сервере почти наверняка работает Nginx. Это самый популярный веб-сервер в мире, обогнавший Apache ещё в 2018 году. Разберёмся, что он делает и почему так популярен.</p>
+
+      <h2>Что такое веб-сервер</h2>
+
+      <p>Веб-сервер — программа, которая принимает HTTP-запросы и отдаёт ответы. Когда браузер открывает сайт, он обращается к веб-серверу на порт 80 или 443.</p>
+
+      <p>Nginx (читается «энджинкс») — один из таких серверов. Он умеет:</p>
+
+      <ul>
+        <li>Отдавать статические файлы (HTML, CSS, JS, картинки).</li>
+        <li>Проксировать запросы к другим сервисам (Python, Node.js, Go).</li>
+        <li>Балансировать нагрузку между несколькими серверами.</li>
+        <li>Кэшировать ответы.</li>
+        <li>Терминировать HTTPS.</li>
+        <li>Сжимать трафик (gzip).</li>
+      </ul>
+
+      <h2>Зачем нужен Nginx, если уже есть приложение</h2>
+
+      <p>Частый вопрос новичка: «У меня есть Django-сайт, он же и так работает — зачем мне Nginx?»</p>
+
+      <p>Ответ: приложение на Python — не веб-сервер. Оно умеет обрабатывать логику, но плохо справляется с:</p>
+
+      <ul>
+        <li><strong>Статикой.</strong> Django может отдать картинку, но это неэффективно. Nginx отдаёт файлы в разы быстрее.</li>
+        <li><strong>HTTPS.</strong> Управление сертификатами — задача веб-сервера.</li>
+        <li><strong>Медленными клиентами.</strong> Если клиент медленно читает ответ, Django будет ждать его. Nginx умеет буферизировать.</li>
+        <li><strong>DoS-атаками.</strong> Nginx может ограничивать число запросов с одного IP.</li>
+      </ul>
+
+      <p>Схема типичного проекта:</p>
+
+      <pre><code class="language-bash">браузер → Nginx → Python-приложение
+              ↓
+           статика</code></pre>
+
+      <p>Nginx стоит спереди. Если запрос на статику — отдаёт сам файл. Если на API — проксирует в приложение.</p>
+
+      <h2>Reverse proxy</h2>
+
+      <p>Ключевая роль Nginx в современном вебе — <strong>обратный прокси</strong>. Он принимает запросы от клиентов и передаёт их внутренним сервисам, а ответы возвращает клиенту.</p>
+
+      <p>Пример: у тебя три бэкенда на портах 8000, 8001, 8002. Снаружи открыт только Nginx на 80. Он маршрутизирует:</p>
+
+      <pre><code class="language-bash">example.com/api/      → localhost:8000
+example.com/admin/    → localhost:8001
+example.com/static/   → папка /var/www/static</code></pre>
+
+      <p>Клиент видит один домен. Внутри — три разных сервиса. Так строятся почти все крупные проекты.</p>
+
+      <h2>Балансировка нагрузки</h2>
+
+      <p>Когда один сервер не справляется — запускают несколько. Nginx распределяет запросы между ними.</p>
+
+      <pre><code class="language-bash">upstream backend {
+    server 10.0.0.1:8000;
+    server 10.0.0.2:8000;
+    server 10.0.0.3:8000;
+}
+
+server {
+    location / {
+        proxy_pass http://backend;
+    }
+}</code></pre>
+
+      <p>Способы балансировки:</p>
+
+      <ul>
+        <li><strong>round-robin</strong> — по очереди. По умолчанию.</li>
+        <li><strong>least_conn</strong> — на сервер с меньшим числом активных соединений.</li>
+        <li><strong>ip_hash</strong> — один клиент всегда попадает на один и тот же сервер.</li>
+      </ul>
+
+      <h2>Установка</h2>
+
+      <pre><code class="language-bash"># Ubuntu / Debian
+sudo apt update
+sudo apt install nginx
+
+# Запуск и автозагрузка
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+# Проверка статуса
+sudo systemctl status nginx</code></pre>
+
+      <p>После установки Nginx сразу отдаёт приветственную страницу на <code>http://localhost</code>.</p>
+
+      <h2>Структура конфигов</h2>
+
+      <pre><code class="language-bash">/etc/nginx/
+├── nginx.conf               # основной конфиг
+├── sites-available/         # доступные сайты
+│   ├── default
+│   └── myapp.conf
+├── sites-enabled/           # включённые сайты (симлинки)
+└── conf.d/                  # доп. конфиги</code></pre>
+
+      <p>Типичный процесс: создаёшь конфиг в <code>sites-available</code>, делаешь симлинк в <code>sites-enabled</code>, перезагружаешь Nginx.</p>
+
+      <h2>Пример конфига для статики</h2>
+
+      <pre><code class="language-bash">server {
+    listen 80;
+    server_name example.com www.example.com;
+
+    # Папка со статикой
+    root /var/www/mysite;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # Логи
+    access_log /var/log/nginx/example_access.log;
+    error_log  /var/log/nginx/example_error.log;
+}</code></pre>
+
+      <p>Что тут:</p>
+
+      <ul>
+        <li><strong>listen 80</strong> — слушать порт 80 (HTTP).</li>
+        <li><strong>server_name</strong> — для какого домена конфиг.</li>
+        <li><strong>root</strong> — корневая папка с файлами.</li>
+        <li><strong>index</strong> — файл по умолчанию.</li>
+        <li><strong>try_files</strong> — попробовать файл, потом папку, иначе 404.</li>
+      </ul>
+
+      <h2>Пример конфига с проксированием</h2>
+
+      <p>Допустим, у тебя Django/FastAPI/Flask на порту 8000, и ты хочешь отдавать статику напрямую через Nginx:</p>
+
+      <pre><code class="language-bash">server {
+    listen 80;
+    server_name example.com;
+
+    # Статику отдаём сами — это быстро
+    location /static/ {
+        alias /home/user/myapp/static/;
+        expires 30d;
+    }
+
+    # Медиафайлы (загруженные пользователями)
+    location /media/ {
+        alias /home/user/myapp/media/;
+    }
+
+    # Всё остальное — проксируем в приложение
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</code></pre>
+
+      <p>Заголовки <code>X-Forwarded-*</code> важны: приложение через них узнаёт настоящий IP клиента, а не IP Nginx.</p>
+
+      <h2>HTTPS через Let's Encrypt</h2>
+
+      <p>Раньше сертификаты стоили денег и настраивались вручную. Сейчас всё делается в две команды:</p>
+
+      <pre><code class="language-bash"># Установить certbot
+sudo apt install certbot python3-certbot-nginx
+
+# Получить сертификат и автоматически настроить Nginx
+sudo certbot --nginx -d example.com -d www.example.com</code></pre>
+
+      <p>Certbot сам:</p>
+
+      <ul>
+        <li>Проверит, что домен указывает на этот сервер.</li>
+        <li>Получит сертификат.</li>
+        <li>Перепишет конфиг Nginx для HTTPS.</li>
+        <li>Настроит автопродление каждые 90 дней.</li>
+      </ul>
+
+      <p>После этого сайт работает по <code>https://</code> без ручной возни.</p>
+
+      <h2>Полезные команды</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Команда</th><th>Что делает</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>nginx -t</td><td>Проверить синтаксис конфигов</td></tr>
+          <tr><td>nginx -s reload</td><td>Перезагрузить без разрыва соединений</td></tr>
+          <tr><td>systemctl restart nginx</td><td>Полный перезапуск</td></tr>
+          <tr><td>systemctl status nginx</td><td>Статус сервиса</td></tr>
+          <tr><td>tail -f /var/log/nginx/access.log</td><td>Смотреть запросы в реальном времени</td></tr>
+          <tr><td>tail -f /var/log/nginx/error.log</td><td>Смотреть ошибки</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p><strong>Правило:</strong> перед каждым <code>reload</code> делай <code>nginx -t</code>. Если конфиг с ошибкой — Nginx не запустится, и сайт упадёт.</p>
+
+      <h2>Nginx vs Apache</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Критерий</th><th>Nginx</th><th>Apache</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Архитектура</td><td>Событийная</td><td>Процесс/поток на запрос</td></tr>
+          <tr><td>Под нагрузкой</td><td>Держит тысячи соединений</td><td>Требует больше памяти</td></tr>
+          <tr><td>Статика</td><td>Очень быстро</td><td>Медленнее</td></tr>
+          <tr><td>Конфиги</td><td>Лаконичные</td><td>Более гибкие, но сложнее</td></tr>
+          <tr><td>.htaccess</td><td>Нет</td><td>Есть</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Nginx выигрывает по скорости и по нагрузке. Apache — по гибкости конфигурации и старой экосистеме. Для новых проектов чаще берут Nginx.</p>
+
+      <h2>Итог</h2>
+
+      <p>Nginx — веб-сервер, который стоит перед приложением и делает всю «грязную работу»: HTTPS, статика, проксирование, балансировка. Почти любой серьёзный проект использует его. Конфиги лаконичные, управление через <code>systemctl</code>, HTTPS — через Certbot в две команды. Если разворачиваешь сайт на своём сервере — Nginx будет первым, что ты поставишь.</p>
+    `
+  },
+  {
+    slug: "paginaciya-i-versirovanie-api",
+    title: "Пагинация и версионирование API — как не сломать клиентов",
+    excerpt: "Как отдавать тысячи записей постранично и что делать, когда API меняется. Разбираем offset/limit, cursor-пагинацию и версионирование.",
+    cover: "img/api-versioning.svg",
+    tags: ["API", "Веб", "Разработка"],
+    date: "2026-04-27",
+    readTime: 11,
+    content: `
+      <p>Представь: у тебя есть API, который отдаёт список статей. Сначала их было 10 — легко вернуть все разом. Потом стало 10 000. И тут начинается: клиент тормозит, сервер захлёбывается, а старые приложения ломаются от любого изменения. Разберём, как это решается.</p>
+
+      <p>Если ещё не читал про <a href="article.html?a=chto-takoe-api">основы API</a> — начни с той статьи.</p>
+
+      <h2>Зачем пагинация</h2>
+
+      <p>Отдать разом 10 000 записей — плохая идея:</p>
+
+      <ul>
+        <li><strong>Большой объём.</strong> Клиент получит мегабайты данных вместо нужных десяти.</li>
+        <li><strong>Медленный запрос.</strong> База выполняет тяжёлый SELECT, сервер рендерит огромный JSON.</li>
+        <li><strong>Плохой UX.</strong> Никто не читает все 10 000 записей сразу — пользователю нужна первая страница.</li>
+      </ul>
+
+      <p>Пагинация разбивает список на страницы. Клиент запрашивает по одной.</p>
+
+      <h2>Offset-пагинация — классика</h2>
+
+      <p>Самый простой способ. Клиент указывает, сколько записей пропустить и сколько взять.</p>
+
+      <pre><code class="language-bash">GET /api/articles?offset=0&amp;limit=10      # первая десятка
+GET /api/articles?offset=10&amp;limit=10     # вторая десятка
+GET /api/articles?offset=20&amp;limit=10     # третья</code></pre>
+
+      <p>Ответ — плюс метаданные:</p>
+
+      <pre><code class="language-json">{
+  "items": [
+    { "id": 1, "title": "Что такое API" },
+    { "id": 2, "title": "Как работает DNS" }
+  ],
+  "total": 45,
+  "offset": 0,
+  "limit": 10,
+  "next": "/api/articles?offset=10&amp;limit=10"
+}</code></pre>
+
+      <p>Реализация на Python (SQLAlchemy):</p>
+
+      <pre><code class="language-python">def get_articles(offset=0, limit=10):
+    total = session.query(Article).count()
+    items = (
+        session.query(Article)
+        .order_by(Article.id)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+    return {
+        'items': [a.to_dict() for a in items],
+        'total': total,
+        'offset': offset,
+        'limit': limit,
+    }</code></pre>
+
+      <h3>Проблемы offset-пагинации</h3>
+
+      <p><strong>1. Медленно на больших offset.</strong> <code>OFFSET 100000</code> заставляет базу отсчитать и выбросить 100 000 строк. Чем дальше — тем медленнее.</p>
+
+      <p><strong>2. Сдвиг данных.</strong> Пока пользователь смотрит первую страницу, кто-то добавил новую запись. Пользователь открывает вторую — и видит одну и ту же запись дважды или пропускает другую.</p>
+
+      <h2>Cursor-пагинация — современный подход</h2>
+
+      <p>Вместо «пропусти N записей» клиент говорит «дай записи после вот этой». В качестве указателя (cursor) обычно используется ID или дата.</p>
+
+      <pre><code class="language-bash">GET /api/articles?limit=10                    # первая страница
+GET /api/articles?limit=10&amp;after=42           # следующие после id=42</code></pre>
+
+      <pre><code class="language-python">def get_articles(after=None, limit=10):
+    query = session.query(Article).order_by(Article.id)
+
+    if after:
+        # Берём только записи с id больше after
+        query = query.filter(Article.id &gt; after)
+
+    items = query.limit(limit).all()
+
+    # Курсор для следующей страницы — id последней записи
+    next_cursor = items[-1].id if items else None
+
+    return {
+        'items': [a.to_dict() for a in items],
+        'next_cursor': next_cursor,
+    }</code></pre>
+
+      <p>Плюсы:</p>
+
+      <ul>
+        <li><strong>Быстро.</strong> База сразу идёт по индексу к нужному месту — не считает пропущенные.</li>
+        <li><strong>Стабильно.</strong> Новые записи не сдвигают старые. Ничего не пропустишь и не увидишь дважды.</li>
+      </ul>
+
+      <p>Минусы:</p>
+
+      <ul>
+        <li><strong>Нельзя прыгнуть на страницу 42.</strong> Только листать вперёд.</li>
+        <li><strong>Нельзя отсортировать как угодно.</strong> Курсор привязан к конкретной сортировке.</li>
+      </ul>
+
+      <p>Cursor-пагинация — стандарт для лент (Instagram, Twitter), чатов, логов. Offset — для админок с фильтрами и сортировками.</p>
+
+      <h2>Что выбрать</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Сценарий</th><th>Что использовать</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Лента, infinite scroll</td><td>Cursor</td></tr>
+          <tr><td>Админка с фильтрами</td><td>Offset</td></tr>
+          <tr><td>Поиск по каталогу</td><td>Offset</td></tr>
+          <tr><td>Живые данные (чаты)</td><td>Cursor</td></tr>
+          <tr><td>Публичный API</td><td>Cursor + offset как fallback</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Версионирование API</h2>
+
+      <p>Рано или поздно в API нужно что-то изменить. Но если изменить старый endpoint — все клиенты сломаются. Решение — версии.</p>
+
+      <p>Старые клиенты работают на <code>v1</code>, новые — на <code>v2</code>. Одновременно.</p>
+
+      <h2>Способ 1. Версия в URL</h2>
+
+      <p>Самый популярный вариант:</p>
+
+      <pre><code class="language-bash">GET /api/v1/articles
+GET /api/v2/articles</code></pre>
+
+      <p>Плюсы:</p>
+
+      <ul>
+        <li>Просто и понятно. Видно сразу в браузере.</li>
+        <li>Легко тестировать — меняешь <code>v1</code> на <code>v2</code> в URL.</li>
+        <li>Легко кэшировать — URL разные.</li>
+      </ul>
+
+      <p>Минусы:</p>
+
+      <ul>
+        <li>Ссылка «привязана» к версии — старые ссылки от старых клиентов работают всегда.</li>
+        <li>Нужно держать оба кода живыми.</li>
+      </ul>
+
+      <p>Так делают Stripe, GitHub, Twilio. Это де-факто стандарт.</p>
+
+      <h2>Способ 2. Версия в заголовке</h2>
+
+      <pre><code class="language-bash">GET /api/articles
+Accept: application/vnd.myapi.v2+json</code></pre>
+
+      <p>Плюсы: URL всегда один и тот же, «чистая» семантика.</p>
+
+      <p>Минусы: не видно в браузере, сложнее тестировать вручную, часть клиентов и прокси могут кэшировать неудачно.</p>
+
+      <p>Так делает GitHub в некоторых API. Для большинства проектов — избыточно.</p>
+
+      <h2>Способ 3. Версия в параметре</h2>
+
+      <pre><code class="language-bash">GET /api/articles?version=2</code></pre>
+
+      <p>Компромисс. Редко используется, но встречается у некоторых публичных API.</p>
+
+      <h2>Что можно менять без версии</h2>
+
+      <p>Не каждое изменение требует новой версии. Безопасные изменения:</p>
+
+      <ul>
+        <li><strong>Добавить новое необязательное поле в ответ.</strong> Старые клиенты его проигнорируют.</li>
+        <li><strong>Добавить новый endpoint.</strong> Существующие клиенты его не используют.</li>
+        <li><strong>Добавить необязательный параметр запроса.</strong> Старые запросы работают как раньше.</li>
+      </ul>
+
+      <p>Опасные изменения — для них нужна новая версия:</p>
+
+      <ul>
+        <li><strong>Удалить поле из ответа.</strong> Старые клиенты могут его ожидать.</li>
+        <li><strong>Переименовать поле.</strong> То же самое.</li>
+        <li><strong>Изменить тип поля.</strong> Было число — стало строка.</li>
+        <li><strong>Сделать необязательный параметр обязательным.</strong> Старые вызовы сломаются.</li>
+        <li><strong>Поменять смысл поля.</strong> Клиент получит не то, что ожидал.</li>
+      </ul>
+
+      <blockquote>Правило: добавлять можно без версии, менять и удалять — только с новой версией.</blockquote>
+
+      <h2>Как поддерживать несколько версий</h2>
+
+      <p>Внутри кода — три подхода.</p>
+
+      <h3>1. Отдельные обработчики</h3>
+
+      <pre><code class="language-python">from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get('/api/v1/articles')
+def articles_v1():
+    # Старый формат ответа
+    return [{'id': 1, 'title': 'Статья', 'body': '...'}]
+
+@app.get('/api/v2/articles')
+def articles_v2():
+    # Новый формат с тегами
+    return [{
+        'id': 1,
+        'title': 'Статья',
+        'content': '...',
+        'tags': ['python', 'tutorial']
+    }]</code></pre>
+
+      <p>Просто, но код дублируется.</p>
+
+      <h3>2. Один обработчик с трансформацией</h3>
+
+      <pre><code class="language-python">@app.get('/api/{version}/articles')
+def articles(version: str):
+    items = fetch_articles()
+
+    if version == 'v2':
+        return [format_v2(item) for item in items]
+    return [format_v1(item) for item in items]</code></pre>
+
+      <p>Меньше дублей, но логика версий размазывается по коду.</p>
+
+      <h3>3. Отдельные модули на версию</h3>
+
+      <p>Самое чистое: папка <code>api/v1/</code> и <code>api/v2/</code>. Каждая — со своими обработчиками. Общая бизнес-логика выносится в отдельный слой, который используют оба.</p>
+
+      <h2>Когда удалять старую версию</h2>
+
+      <p>Никогда — если нет веской причины. Клиенты могут быть не обновлены годами. Даже если у тебя «новое мобильное приложение», кто-то пользуется старой версией.</p>
+
+      <p>Если правда надо — предупреди за месяцы. Стандарты:</p>
+
+      <ul>
+        <li><strong>Заголовок Deprecation.</strong> <code>Deprecation: true</code> в ответе.</li>
+        <li><strong>Sunset.</strong> <code>Sunset: Sat, 01 Jan 2027 00:00:00 GMT</code> — когда отключат.</li>
+        <li><strong>Письмо разработчикам.</strong> За 3–6 месяцев до отключения.</li>
+      </ul>
+
+      <h2>Пример полного ответа API</h2>
+
+      <pre><code class="language-json">{
+  "items": [
+    { "id": 42, "title": "Что такое API" },
+    { "id": 43, "title": "Как работает DNS" }
+  ],
+  "pagination": {
+    "limit": 10,
+    "next_cursor": 43,
+    "has_more": true
+  },
+  "meta": {
+    "version": "v2",
+    "generated_at": "2026-04-27T12:00:00Z"
+  }
+}</code></pre>
+
+      <p>Тут три уровня: данные, пагинация, метаинформация. Такой ответ и стабильный, и информативный.</p>
+
+      <h2>Итог</h2>
+
+      <p>Пагинация обязательна, если данных больше сотни. Offset прост, но медленный на глубине и сдвигается при изменениях. Cursor быстрый и стабильный — стандарт для лент. Версии в URL — самый частый и удобный способ версионировать API. Добавлять можно без версии, менять и удалять — только с новой. Старую версию не удаляй, пока клиенты не отвалятся сами.</p>
+    `
   }
 ];
