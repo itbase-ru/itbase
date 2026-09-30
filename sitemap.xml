@@ -299,6 +299,26 @@
   <lastmod>2026-04-19</lastmod>
   <priority>0.8</priority>
 </url>
+  <url>
+  <loc>https://itbase-ru.github.io/article.html?a=python-s-nulya</loc>
+  <lastmod>2026-04-20</lastmod>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://itbase-ru.github.io/article.html?a=tranzakcii-i-acid</loc>
+  <lastmod>2026-04-21</lastmod>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://itbase-ru.github.io/article.html?a=cookie-localstorage-sessionstorage</loc>
+  <lastmod>2026-04-22</lastmod>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://itbase-ru.github.io/article.html?a=dizayn-patterns-singleton-factory-observer</loc>
+  <lastmod>2026-04-23</lastmod>
+  <priority>0.8</priority>
+</url>
 </urlset>
 
 </urlset>
