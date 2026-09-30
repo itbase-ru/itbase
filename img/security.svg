@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <rect width="800" height="400" fill="#0a0c10"/>
+  <path d="M 400,80 L 460,110 L 460,190 C 460,240 430,270 400,290 C 370,270 340,240 340,190 L 340,110 Z" fill="none" stroke="#ffb454" stroke-width="3"/>
+  <text x="400" y="200" text-anchor="middle" font-family="monospace" font-size="32" fill="#ffb454" font-weight="bold">!</text>
+  <text x="200" y="140" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">XSS</text>
+  <text x="200" y="220" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">CSRF</text>
+  <text x="200" y="300" text-anchor="middle" font-family="monospace" font-size="14" fill="#8a95a6">SQL-i</text>
+  <text x="600" y="140" text-anchor="middle" font-family="monospace" font-size="14" fill="#ffb454">escape</text>
+  <text x="600" y="220" text-anchor="middle" font-family="monospace" font-size="14" fill="#ffb454">token</text>
+  <text x="600" y="300" text-anchor="middle" font-family="monospace" font-size="14" fill="#ffb454">param</text>
+  <line x1="240" y1="135" x2="345" y2="150" stroke="#222a36" stroke-width="2"/>
+  <line x1="240" y1="215" x2="345" y2="190" stroke="#222a36" stroke-width="2"/>
+  <line x1="240" y1="295" x2="355" y2="230" stroke="#222a36" stroke-width="2"/>
+  <line x1="455" y1="150" x2="560" y2="135" stroke="#222a36" stroke-width="2"/>
+  <line x1="455" y1="190" x2="560" y2="215" stroke="#222a36" stroke-width="2"/>
+  <line x1="445" y1="230" x2="560" y2="295" stroke="#222a36" stroke-width="2"/>
+  <text x="400" y="360" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#8a95a6" letter-spacing="3">WEB SECURITY</text>
+</svg>
