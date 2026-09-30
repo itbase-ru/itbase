@@ -8097,5 +8097,946 @@ process_order(42)
 
       <p>Декоратор — это функция, которая оборачивает другую функцию. Работает через способность Python возвращать функции из функций. Применяется в фреймворках, кэшировании, аутентификации, логировании. Синтаксис <code>@имя</code> — просто сокращение. Не забывай про <code>functools.wraps</code> и <code>*args, **kwargs</code>. Как только поймёшь декораторы — код станет заметно короче.</p>
     `
+  },
+     {
+    slug: "python-s-nulya",
+    title: "Python с нуля — базовый синтаксис за 15 минут",
+    excerpt: "Переменные, типы, условия, циклы, функции и списки. Минимальный набор, с которого начинается любой Python-проект.",
+    cover: "img/python.svg",
+    tags: ["Python", "Разработка", "Теория"],
+    date: "2026-04-20",
+    readTime: 12,
+    content: `
+      <p>Python — один из самых дружелюбных языков для старта. Читается почти как английский, не требует лишних слов и точек с запятой. В этой статье — весь базовый синтаксис, который нужен, чтобы начать писать код.</p>
+
+      <p>Если ещё не выбрал язык — глянь <a href="article.html?a=kak-vybrat-pervyy-yazyk-programmirovaniya">как выбрать первый язык программирования</a>.</p>
+
+      <h2>Первая программа</h2>
+
+      <p>Традиционное начало — «Hello, world». В Python это одна строка:</p>
+
+      <pre><code class="language-python">print('Привет, мир!')</code></pre>
+
+      <p><code>print</code> — встроенная функция, которая выводит текст на экран. Запусти этот код в любом онлайн-редакторе (например, <code>replit.com</code> или <code>python.org/shell</code>) — увидишь результат.</p>
+
+      <h2>Переменные и типы</h2>
+
+      <p>Переменная — это имя, под которым хранится значение. В Python тип указывать не нужно — он определяется автоматически.</p>
+
+      <pre><code class="language-python"># Строка
+name = 'Кирилл'
+
+# Целое число
+age = 30
+
+# Дробное число
+height = 1.78
+
+# Логический тип
+is_student = False
+
+# Проверяем типы
+print(type(name))    # &lt;class 'str'&gt;
+print(type(age))     # &lt;class 'int'&gt;
+print(type(height))  # &lt;class 'float'&gt;
+print(type(is_student))  # &lt;class 'bool'&gt;</code></pre>
+
+      <p>Основные типы: <code>str</code> (строка), <code>int</code> (целое), <code>float</code> (дробное), <code>bool</code> (True/False), <code>None</code> (пустое значение).</p>
+
+      <h2>Строки</h2>
+
+      <p>Строки можно складывать и повторять:</p>
+
+      <pre><code class="language-python">first = 'Привет'
+second = 'мир'
+
+# Складываем через плюс
+greeting = first + ', ' + second + '!'
+print(greeting)   # Привет, мир!
+
+# Повторяем строку
+line = '=' * 20
+print(line)   # ====================</code></pre>
+
+      <p>Длинные тексты можно собирать через f-строки — но об этом ниже.</p>
+
+      <h2>Условия</h2>
+
+      <p>Программа умеет принимать решения через <code>if</code>:</p>
+
+      <pre><code class="language-python">age = 20
+
+if age &gt;= 18:
+    print('Совершеннолетний')
+else:
+    print('Ещё рано')</code></pre>
+
+      <p>Обрати внимание: в Python <strong>нет фигурных скобок</strong>. Вместо них — отступы. Всё, что с отступом, — внутри блока.</p>
+
+      <p>Можно добавить ещё вариантов через <code>elif</code>:</p>
+
+      <pre><code class="language-python">score = 75
+
+if score &gt;= 90:
+    print('Отлично')
+elif score &gt;= 70:
+    print('Хорошо')
+elif score &gt;= 50:
+    print('Удовлетворительно')
+else:
+    print('Надо доработать')</code></pre>
+
+      <h2>Циклы</h2>
+
+      <p>Два вида циклов: <code>for</code> и <code>while</code>.</p>
+
+      <h3>for — когда знаешь, сколько раз</h3>
+
+      <pre><code class="language-python"># Пройти по списку
+fruits = ['яблоко', 'банан', 'груша']
+for fruit in fruits:
+    print(fruit)
+
+# Или прогнать числа от 0 до 4
+for i in range(5):
+    print(i)</code></pre>
+
+      <p><code>range(5)</code> даёт числа 0, 1, 2, 3, 4 — пять штук, не включая 5. Это стандарт.</p>
+
+      <p>Полезный вариант — <code>range(1, 6)</code>: числа от 1 до 5.</p>
+
+      <h3>while — пока условие истинно</h3>
+
+      <pre><code class="language-python">counter = 0
+
+while counter &lt; 5:
+    print('Счётчик: ' + str(counter))
+    counter = counter + 1</code></pre>
+
+      <p><strong>Важно:</strong> не забудь увеличивать счётчик внутри <code>while</code>. Иначе цикл никогда не закончится, и программа зависнет.</p>
+
+      <h2>Списки</h2>
+
+      <p>Список — упорядоченный набор значений. В квадратных скобках:</p>
+
+      <pre><code class="language-python">numbers = [10, 20, 30, 40]
+names = ['Анна', 'Борис', 'Вера']
+
+# Первый элемент
+print(numbers[0])   # 10
+
+# Последний
+print(numbers[-1])  # 40
+
+# Длина
+print(len(numbers))   # 4</code></pre>
+
+      <p>Основные операции:</p>
+
+      <pre><code class="language-python">items = [1, 2, 3]
+
+# Добавить в конец
+items.append(4)
+print(items)   # [1, 2, 3, 4]
+
+# Удалить по значению
+items.remove(2)
+print(items)   # [1, 3, 4]
+
+# Проверить, есть ли элемент
+print(3 in items)   # True
+
+# Срез — часть списка
+print(items[0:2])   # [1, 3]</code></pre>
+
+      <p>Срез <code>[0:2]</code> — это «с 0-го по 2-й, не включая 2-й». То есть элементы с индексами 0 и 1.</p>
+
+      <h2>Словари</h2>
+
+      <p>Словарь хранит пары «ключ → значение». Идеален для структурированных данных:</p>
+
+      <pre><code class="language-python">user = {
+    'name': 'Кирилл',
+    'age': 30,
+    'city': 'Москва'
+}
+
+# Доступ по ключу
+print(user['name'])   # Кирилл
+
+# Добавить или изменить
+user['email'] = 'kirill@mail.ru'
+
+# Проверить наличие
+print('age' in user)   # True
+
+# Пройти по всем парам
+for key, value in user.items():
+    print(key + ': ' + str(value))</code></pre>
+
+      <h2>Функции</h2>
+
+      <p>Функция — блок кода с именем, который можно вызывать сколько угодно раз. Объявляется через <code>def</code>:</p>
+
+      <pre><code class="language-python">def greet(name):
+    return 'Привет, ' + name
+
+# Вызов
+result = greet('Кирилл')
+print(result)   # Привет, Кирилл</code></pre>
+
+      <p>Ключевое слово <code>return</code> возвращает значение. Без него функция вернёт <code>None</code>.</p>
+
+      <p>Функция может принимать несколько аргументов и иметь значения по умолчанию:</p>
+
+      <pre><code class="language-python">def introduce(name, age=18):
+    return name + ', ' + str(age) + ' лет'
+
+print(introduce('Анна'))          # Анна, 18 лет
+print(introduce('Борис', 25))     # Борис, 25 лет</code></pre>
+
+      <p>Аргумент с <code>=</code> — необязательный. Если его не передать, используется значение по умолчанию.</p>
+
+      <h2>Импорт модулей</h2>
+
+      <p>Python идёт с огромной стандартной библиотекой. Подключается через <code>import</code>:</p>
+
+      <pre><code class="language-python">import math
+import random
+
+# Используем функции модуля
+print(math.sqrt(16))         # 4.0
+print(random.randint(1, 6))  # случайное от 1 до 6</code></pre>
+
+      <p>Сторонние библиотеки ставятся через <code>pip install имя_пакета</code>. Потом — тот же <code>import</code>.</p>
+
+      <h2>Практический пример</h2>
+
+      <p>Соберём всё вместе. Программа, которая считает статистику по списку оценок:</p>
+
+      <pre><code class="language-python"># Список оценок
+grades = [5, 4, 3, 5, 4, 5, 4, 3, 5, 4]
+
+# Функция подсчёта среднего
+def average(numbers):
+    total = 0
+    for n in numbers:
+        total = total + n
+    return total / len(numbers)
+
+# Функция определения категории
+def category(avg):
+    if avg &gt;= 4.5:
+        return 'отличник'
+    elif avg &gt;= 3.5:
+        return 'хорошист'
+    else:
+        return 'троечник'
+
+# Основная логика
+avg = average(grades)
+cat = category(avg)
+
+print('Средний балл: ' + str(round(avg, 2)))
+print('Категория: ' + cat)</code></pre>
+
+      <p>Запусти — увидишь средний балл и категорию. Это уже настоящая программа, хоть и маленькая.</p>
+
+      <h2>Что учить дальше</h2>
+
+      <ol>
+        <li><strong>Кортежи и множества.</strong> Родственники списков со своими правилами.</li>
+        <li><strong>Классы и ООП.</strong> Об этом — <a href="article.html?a=oop-prostymi-slovami">ООП простыми словами</a>.</li>
+        <li><strong>Работа с файлами.</strong> Чтение и запись через <code>open</code>.</li>
+        <li><strong>Исключения.</strong> Обработка ошибок через <code>try</code> и <code>except</code>.</li>
+        <li><strong>Продвинутые функции.</strong> Декораторы, генераторы, лямбды.</li>
+      </ol>
+
+      <blockquote>Не пытайся выучить всё сразу. Освой базу — переменные, условия, циклы, функции — и напиши 5 маленьких программ. Только потом двигайся дальше.</blockquote>
+
+      <h2>Итог</h2>
+
+      <p>Python прост в синтаксисе: нет фигурных скобок, не нужно объявлять типы, код читается как английский. Основные конструкции — переменные, условия, циклы, списки, словари, функции — покрывают 80% задач новичка. Дальше — практика: калькулятор, todo-список, парсер. Реальные задачи учат быстрее любых курсов.</p>
+    `
+  },
+  {
+    slug: "tranzakcii-i-acid",
+    title: "Транзакции в базах данных — ACID простыми словами",
+    excerpt: "Почему при переводе денег нельзя потерять ни копейки. Разбираем транзакции и четыре их свойства: атомарность, согласованность, изоляцию, надёжность.",
+    cover: "img/tranzakcii.svg",
+    tags: ["Базы данных", "SQL", "Теория"],
+    date: "2026-04-21",
+    readTime: 11,
+    content: `
+      <p>Представь перевод денег с карты на карту. С твоего счёта списалось 1000 рублей, но у получателя они не появились из-за сбоя. Деньги исчезли. Именно от такого защищают транзакции.</p>
+
+      <p>Если ещё не читал про <a href="article.html?a=sql-zaprosy-s-nulya">SQL-запросы</a> — начни с той статьи.</p>
+
+      <h2>Что такое транзакция</h2>
+
+      <p>Транзакция — это <strong>группа операций, которая выполняется целиком или не выполняется вообще</strong>. Промежуточного состояния быть не может.</p>
+
+      <p>Пример перевода денег — это две операции:</p>
+
+      <ol>
+        <li>Списать 1000 с одного счёта.</li>
+        <li>Зачислить 1000 на другой.</li>
+      </ol>
+
+      <p>Если первая прошла, а вторая упала — деньги потеряны. Транзакция гарантирует: либо обе прошли, либо ни одна.</p>
+
+      <blockquote>Транзакция — как кнопка «Сохранить» в документе: либо всё, либо ничего.</blockquote>
+
+      <h2>Пример на SQL</h2>
+
+      <pre><code class="language-sql">-- Начинаем транзакцию
+BEGIN;
+
+-- Списываем со счёта отправителя
+UPDATE accounts
+SET balance = balance - 1000
+WHERE id = 1;
+
+-- Зачисляем получателю
+UPDATE accounts
+SET balance = balance + 1000
+WHERE id = 2;
+
+-- Подтверждаем — обе операции сохраняются вместе
+COMMIT;</code></pre>
+
+      <p>Если между <code>UPDATE</code> что-то падает — мы вызываем <code>ROLLBACK</code> и обе операции отменяются:</p>
+
+      <pre><code class="language-sql">BEGIN;
+
+UPDATE accounts SET balance = balance - 1000 WHERE id = 1;
+
+-- Что-то пошло не так → откатываем всё
+ROLLBACK;</code></pre>
+
+      <p>После <code>ROLLBACK</code> база вернётся в состояние, как будто транзакции вообще не было.</p>
+
+      <h2>Четыре свойства — ACID</h2>
+
+      <p>Это аббревиатура из четырёх английских слов. Каждое описывает одну гарантию транзакции.</p>
+
+      <h3>A — Atomicity (атомарность)</h3>
+
+      <p>Все операции внутри транзакции — единое целое. Либо все выполнятся, либо ни одна. Не бывает так, что «списание прошло, а зачисление — нет».</p>
+
+      <h3>C — Consistency (согласованность)</h3>
+
+      <p>После транзакции база остаётся в <strong>корректном состоянии</strong>. Все правила и ограничения соблюдены. Например, если у тебя правило «баланс не может быть отрицательным», транзакция не пройдёт, если она нарушит это правило.</p>
+
+      <h3>I — Isolation (изоляция)</h3>
+
+      <p>Параллельные транзакции не видят друг друга «изнутри». Пока ты не завершил транзакцию, другие пользователи видят базу в прежнем состоянии.</p>
+
+      <p>Это самое сложное свойство. Об изоляции — отдельно ниже.</p>
+
+      <h3>D — Durability (надёжность)</h3>
+
+      <p>После <code>COMMIT</code> данные сохранены <strong>навсегда</strong>. Даже если сервер выключится, свет пропадёт или диск сломается — после перезапуска данные на месте.</p>
+
+      <p>Достигается через журналирование: все изменения сначала пишутся в лог, потом применяются к базе.</p>
+
+      <h2>Проблемы параллельности</h2>
+
+      <p>Когда две транзакции работают одновременно, возникают классические проблемы.</p>
+
+      <h3>Грязное чтение (dirty read)</h3>
+
+      <p>Одна транзакция читает данные, которые другая ещё не подтвердила. Если вторая откатится — первая работала с «фантомом».</p>
+
+      <h3>Неповторяющееся чтение</h3>
+
+      <p>Транзакция дважды читает одну строку и получает разные данные — потому что между чтениями вторая транзакция её изменила.</p>
+
+      <h3>Фантомное чтение</h3>
+
+      <p>Транзакция дважды выполняет один запрос и получает разное <strong>количество строк</strong> — потому что вторая транзакция добавила или удалила записи.</p>
+
+      <h2>Уровни изоляции</h2>
+
+      <p>Полная изоляция замедляет базу. Поэтому есть четыре уровня — от самого быстрого и небезопасного до самого строгого и медленного.</p>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Уровень</th><th>Грязное чтение</th><th>Неповторяющееся</th><th>Фантомное</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Read uncommitted</td><td>Возможно</td><td>Возможно</td><td>Возможно</td></tr>
+          <tr><td>Read committed</td><td>Нет</td><td>Возможно</td><td>Возможно</td></tr>
+          <tr><td>Repeatable read</td><td>Нет</td><td>Нет</td><td>Возможно</td></tr>
+          <tr><td>Serializable</td><td>Нет</td><td>Нет</td><td>Нет</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Как выбрать:</p>
+
+      <ul>
+        <li><strong>Read committed</strong> — дефолт в PostgreSQL. Достаточно для большинства задач.</li>
+        <li><strong>Repeatable read</strong> — когда важно видеть стабильные данные в рамках транзакции.</li>
+        <li><strong>Serializable</strong> — для критичных расчётов, где важна абсолютная точность.</li>
+      </ul>
+
+      <p>Чем выше уровень — тем больше блокировок и тем медленнее база.</p>
+
+      <h2>Пример проблемы на практике</h2>
+
+      <p>Два человека одновременно покупают последний товар на складе (осталось 1 штука).</p>
+
+      <pre><code class="language-sql">-- Транзакция 1
+BEGIN;
+SELECT quantity FROM products WHERE id = 42;   -- видит 1
+-- ... думает ...
+
+-- Транзакция 2 (в тот же момент)
+BEGIN;
+SELECT quantity FROM products WHERE id = 42;   -- тоже видит 1
+-- ... тоже думает ...
+
+-- Обе решают: товар есть, можно продавать
+-- Обе делают:
+UPDATE products SET quantity = quantity - 1 WHERE id = 42;
+
+-- Итог: продали два товара, хотя был один
+COMMIT;</code></pre>
+
+      <p>Это называется <strong>гонка</strong>. Решается через блокировки или правильный уровень изоляции.</p>
+
+      <h3>Решение — блокировка строки</h3>
+
+      <pre><code class="language-sql">BEGIN;
+
+-- Блокируем строку, пока не закончим транзакцию
+SELECT quantity FROM products WHERE id = 42 FOR UPDATE;
+
+-- Вторая транзакция будет ждать, пока первая не завершится
+UPDATE products SET quantity = quantity - 1 WHERE id = 42;
+
+COMMIT;</code></pre>
+
+      <p><code>FOR UPDATE</code> блокирует строку. Вторая транзакция подождёт, потом увидит quantity = 0 и откажет покупателю.</p>
+
+      <h2>Блокировки и дедлоки</h2>
+
+      <p>Блокировки защищают от гонок, но создают новые проблемы. Если две транзакции заблокируют разные строки и потом попробуют заблокировать строки друг друга — возникает <strong>дедлок</strong> (взаимная блокировка).</p>
+
+      <p>Пример:</p>
+
+      <ul>
+        <li>Транзакция A блокирует строку 1, хочет строку 2.</li>
+        <li>Транзакция B блокирует строку 2, хочет строку 1.</li>
+        <li>Обе ждут вечно.</li>
+      </ul>
+
+      <p>СУБД сама разрешает дедлок: одну из транзакций она принудительно откатит. Важно быть готовым к тому, что транзакция может откатиться — и обработать это в коде.</p>
+
+      <h2>В коде приложения</h2>
+
+      <p>Python + SQLAlchemy:</p>
+
+      <pre><code class="language-python">from sqlalchemy.orm import Session
+
+def transfer_money(session, from_id, to_id, amount):
+    try:
+        # Списываем
+        from_account = session.query(Account).get(from_id)
+        from_account.balance -= amount
+
+        # Зачисляем
+        to_account = session.query(Account).get(to_id)
+        to_account.balance += amount
+
+        # Фиксируем — обе операции вместе
+        session.commit()
+    except Exception as error:
+        # Что-то упало — откатываем всё
+        session.rollback()
+        raise error</code></pre>
+
+      <p>Здесь <code>commit()</code> = <code>COMMIT</code> в SQL. <code>rollback()</code> = <code>ROLLBACK</code>.</p>
+
+      <h2>Когда транзакции не нужны</h2>
+
+      <ul>
+        <li><strong>Чтение данных без изменений.</strong> Просто SELECT — транзакция не нужна.</li>
+        <li><strong>Одиночная вставка.</strong> Если это один INSERT без зависимостей — можно без BEGIN/COMMIT.</li>
+        <li><strong>Логирование и метрики.</strong> Тут наоборот — потеря одной записи не критична.</li>
+      </ul>
+
+      <h2>Частые ошибки</h2>
+
+      <ul>
+        <li><strong>Долгие транзакции.</strong> Открыл BEGIN, сходил на обед, вернулся — транзакция всё ещё держит блокировки. Другие ждут. Транзакции должны быть короткими.</li>
+        <li><strong>Транзакции в цикле.</strong> Не открывай отдельную транзакцию для каждой итерации — это медленно.</li>
+        <li><strong>Забыть commit.</strong> Данные не сохранятся. Или откатятся при разрыве соединения.</li>
+        <li><strong>Ловить все исключения.</strong> Если ловишь <code>except Exception</code> — не забудь сделать rollback, иначе сессия останется в нерабочем состоянии.</li>
+      </ul>
+
+      <h2>Итог</h2>
+
+      <p>Транзакция — группа операций, которая выполняется целиком или не выполняется вообще. Четыре свойства ACID: атомарность, согласованность, изоляция, надёжность. Уровни изоляции балансируют между точностью и скоростью. Для критичных операций — блокировки через FOR UPDATE. Не забывай про rollback при ошибках и держи транзакции короткими.</p>
+    `
+  },
+  {
+    slug: "cookie-localstorage-sessionstorage",
+    title: "Cookie, localStorage и sessionStorage — что выбрать",
+    excerpt: "Три способа хранить данные в браузере. Разбираем разницу, лимиты, безопасность и когда что использовать — на конкретных примерах.",
+    cover: "img/storage.svg",
+    tags: ["Веб", "JavaScript", "Безопасность"],
+    date: "2026-04-22",
+    readTime: 10,
+    content: `
+      <p>Если ты делаешь фронтенд, рано или поздно встанет вопрос: где хранить токен авторизации, настройки темы, содержимое корзины. Есть три стандартных способа, и у каждого свои особенности. Разберём по-честному.</p>
+
+      <h2>Cookie</h2>
+
+      <p>Самый старый механизм. Куки — это небольшие текстовые пары «ключ=значение», которые браузер <strong>автоматически отправляет на сервер</strong> с каждым HTTP-запросом к тому же домену.</p>
+
+      <pre><code class="language-javascript">// Установить куку
+document.cookie = 'theme=dark; path=/; max-age=86400';
+
+// Прочитать все куки (строкой)
+console.log(document.cookie);   // 'theme=dark; other=value'</code></pre>
+
+      <p>Писать куки вручную неудобно — обычно это делают через сервер. Сервер присылает заголовок:</p>
+
+      <pre><code class="language-bash">Set-Cookie: session_id=abc123; HttpOnly; Secure; SameSite=Strict</code></pre>
+
+      <p>Ключевые параметры:</p>
+
+      <ul>
+        <li><strong>HttpOnly</strong> — кука недоступна из JavaScript. Защита от XSS: украсть её нельзя.</li>
+        <li><strong>Secure</strong> — отправляется только по HTTPS.</li>
+        <li><strong>SameSite</strong> — защита от CSRF. <code>Strict</code> — не отправлять на чужие сайты, <code>Lax</code> — отправлять только при переходах из адресной строки, <code>None</code> — отправлять всегда.</li>
+        <li><strong>Max-Age</strong> — время жизни в секундах.</li>
+        <li><strong>Path</strong> — для каких путей отправлять.</li>
+      </ul>
+
+      <p>Лимит: <strong>около 4 КБ на куку</strong>. И браузер ограничивает количество куки на домен (обычно 50).</p>
+
+      <h2>localStorage</h2>
+
+      <p>Хранилище пар «ключ=значение», которое живёт <strong>постоянно</strong> — пока пользователь сам не очистит. Не отправляется на сервер автоматически.</p>
+
+      <pre><code class="language-javascript">// Сохранить
+localStorage.setItem('theme', 'dark');
+localStorage.setItem('user', JSON.stringify({ id: 1, name: 'Кирилл' }));
+
+// Прочитать
+var theme = localStorage.getItem('theme');   // 'dark'
+
+// Прочитать объект
+var user = JSON.parse(localStorage.getItem('user'));
+
+// Удалить
+localStorage.removeItem('theme');
+
+// Очистить всё
+localStorage.clear();</code></pre>
+
+      <p>Лимит: обычно <strong>5–10 МБ</strong>. Точный объём зависит от браузера.</p>
+
+      <p>Работает синхронно — то есть блокирует поток при операциях. Для больших объёмов это может тормозить.</p>
+
+      <h2>sessionStorage</h2>
+
+      <p>Почти то же самое, что localStorage, но данные живут <strong>только пока открыта вкладка</strong>. Закрыл вкладку — данные исчезли.</p>
+
+      <pre><code class="language-javascript">sessionStorage.setItem('step', '3');
+console.log(sessionStorage.getItem('step'));   // '3'
+
+// При закрытии вкладки данные удаляются</code></pre>
+
+      <p>Каждая вкладка имеет своё отдельное хранилище. Если открыть тот же сайт в двух вкладках — там будут разные sessionStorage.</p>
+
+      <h2>Сравнение</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Критерий</th><th>Cookie</th><th>localStorage</th><th>sessionStorage</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Размер</td><td>~4 КБ</td><td>5–10 МБ</td><td>5–10 МБ</td></tr>
+          <tr><td>Живёт</td><td>до срока или удаления</td><td>постоянно</td><td>до закрытия вкладки</td></tr>
+          <tr><td>Отправляется на сервер</td><td>Да, автоматически</td><td>Нет</td><td>Нет</td></tr>
+          <tr><td>Доступен из JS</td><td>Да (если не HttpOnly)</td><td>Да</td><td>Да</td></tr>
+          <tr><td>Защита от XSS</td><td>Через HttpOnly</td><td>Нет</td><td>Нет</td></tr>
+          <tr><td>Защита от CSRF</td><td>Через SameSite</td><td>Нет (не отправляется)</td><td>Нет</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Уязвимости — коротко</h2>
+
+      <h3>XSS и localStorage</h3>
+
+      <p>Если злоумышленник может выполнить JS на твоей странице (XSS-атака) — он украдёт всё из localStorage и sessionStorage. Токены, пароли, что угодно.</p>
+
+      <p>Куки с <code>HttpOnly</code> от этого защищены: JavaScript их не видит.</p>
+
+      <h3>CSRF и cookies</h3>
+
+      <p>Куки автоматически отправляются с запросами. Если пользователь залогинен и заходит на чужой сайт — тот может отправить запрос на твой сервер, а куки приложатся сами. Это CSRF.</p>
+
+      <p>Защита — атрибут <code>SameSite</code> или CSRF-токены.</p>
+
+      <h2>Что где хранить</h2>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Что</th><th>Где</th><th>Почему</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Токен авторизации</td><td>HttpOnly cookie</td><td>XSS не украдёт</td></tr>
+          <tr><td>Тема сайта</td><td>localStorage</td><td>Сохраняется навсегда</td></tr>
+          <tr><td>Настройки интерфейса</td><td>localStorage</td><td>Постоянные</td></tr>
+          <tr><td>Корзина (без логина)</td><td>localStorage</td><td>Живёт между сессиями</td></tr>
+          <tr><td>Данные формы</td><td>sessionStorage</td><td>Не нужны после закрытия</td></tr>
+          <tr><td>Позиция скролла</td><td>sessionStorage</td><td>Только в текущей вкладке</td></tr>
+          <tr><td>Токен CSRF</td><td>Cookie (не HttpOnly)</td><td>Нужен на сервере и в JS</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Пример: правильная работа с токеном</h2>
+
+      <p>Правильный вариант — хранить токен в <code>HttpOnly</code> куке, которую ставит сервер:</p>
+
+      <pre><code class="language-python"># На сервере (Python + Flask)
+from flask import make_response
+
+@app.route('/login', methods=['POST'])
+def login():
+    # ... проверка логина/пароля ...
+
+    response = make_response({'status': 'ok'})
+    # Ставим токен в защищённую куку
+    response.set_cookie(
+        'session_token',
+        'abc123xyz...',
+        httponly=True,       # JS не увидит
+        secure=True,         # только HTTPS
+        samesite='Strict',   # защита от CSRF
+        max_age=86400        # сутки
+    )
+    return response</code></pre>
+
+      <p>Клиент про токен вообще не знает. При каждом запросе браузер сам приложит куку. Украсть нельзя ни через XSS, ни из dev tools.</p>
+
+      <h2>Практический пример: тема сайта</h2>
+
+      <p>Тема — не секрет, её можно спокойно хранить в localStorage:</p>
+
+      <pre><code class="language-javascript">// Кнопка переключения темы
+function toggleTheme() {
+  var current = localStorage.getItem('theme') || 'dark';
+  var next = current === 'dark' ? 'light' : 'dark';
+
+  localStorage.setItem('theme', next);
+  document.documentElement.setAttribute('data-theme', next);
+}
+
+// При загрузке страницы — восстановить тему
+function applyTheme() {
+  var saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+  }
+}
+
+applyTheme();</code></pre>
+
+      <p>Этот сайт так и работает — тема сохраняется в localStorage под ключом <code>itbase_theme</code>.</p>
+
+      <h2>IndexedDB — если данных много</h2>
+
+      <p>Четвёртый вариант, о котором не всегда вспоминают. IndexedDB — полноценная база данных в браузере:</p>
+
+      <ul>
+        <li>Лимит — гигабайты.</li>
+        <li>Асинхронная (не блокирует поток).</li>
+        <li>Хранит объекты, файлы, бинарные данные.</li>
+        <li>Сложнее в использовании.</li>
+      </ul>
+
+      <p>Используется для оффлайн-приложений, кэша больших данных, PWA. Для простых задач — избыточна.</p>
+
+      <h2>Итог</h2>
+
+      <p>Cookie — маленькие, отправляются на сервер, могут быть защищены от XSS через HttpOnly. localStorage — большой и постоянный, но уязвим для XSS. sessionStorage — как localStorage, но живёт только до закрытия вкладки. Токены авторизации — в HttpOnly cookie. Настройки и UI — в localStorage. Данные формы — в sessionStorage. Если данных много — IndexedDB. Не храни секреты в localStorage — их украдут при первой XSS.</p>
+    `
+  },
+  {
+    slug: "dizayn-patterns-singleton-factory-observer",
+    title: "Дизайн-паттерны — Singleton, Factory, Observer",
+    excerpt: "Три самых частых паттерна проектирования. Разбираем на примерах: зачем нужны, как устроены и где применяются в реальном коде.",
+    cover: "img/patterns.svg",
+    tags: ["Разработка", "Архитектура", "Теория"],
+    date: "2026-04-23",
+    readTime: 11,
+    content: `
+      <p>Дизайн-паттерны — это готовые решения типовых задач. Не библиотеки, не код, который копируют, а <strong>шаблоны мышления</strong>: увидел знакомую проблему — вспомнил проверенное решение. Разберём три самых частых.</p>
+
+      <h2>Что такое паттерн</h2>
+
+      <p>Паттерн — это описание того, как решать определённый класс задач. Появились они в 1994 году в книге «Design Patterns» (её называют «бандой четырёх» — GoF). С тех пор — стандарт индустрии.</p>
+
+      <p>Не путай с алгоритмами: алгоритм — конкретные шаги решения. Паттерн — структура кода, которую можно применить к разным задачам.</p>
+
+      <blockquote>Паттерны — не цель, а инструмент. Не надо пихать их везде. Но не знать их — значит изобретать велосипед.</blockquote>
+
+      <h2>Паттерн 1. Singleton (Одиночка)</h2>
+
+      <p><strong>Задача:</strong> нужен объект, который существует <strong>в единственном экземпляре</strong> на всю программу.</p>
+
+      <p>Примеры:</p>
+
+      <ul>
+        <li>Подключение к базе данных — не нужно создавать новое на каждый запрос.</li>
+        <li>Конфигурация приложения.</li>
+        <li>Логгер.</li>
+        <li>Кэш в памяти.</li>
+      </ul>
+
+      <h3>Реализация на Python</h3>
+
+      <pre><code class="language-python">class Database:
+    _instance = None   # храним единственный экземпляр
+
+    def __new__(cls):
+        # Если экземпляр ещё не создан — создаём
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        # Всегда возвращаем один и тот же объект
+        return cls._instance
+
+    def query(self, sql):
+        return 'Результат запроса: ' + sql
+
+# Проверяем — оба раза один и тот же объект
+db1 = Database()
+db2 = Database()
+
+print(db1 is db2)   # True</code></pre>
+
+      <p>Первый вызов создаёт объект. Второй, третий, десятый — возвращают тот же самый. Вся программа работает с одним подключением.</p>
+
+      <h3>Плюсы и минусы</h3>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Плюсы</th><th>Минусы</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Один объект — экономия ресурсов</td><td>Глобальное состояние — сложно тестировать</td></tr>
+          <tr><td>Единая точка доступа</td><td>Скрытые зависимости в коде</td></tr>
+          <tr><td>Контроль над состоянием</td><td>Проблемы с многопоточностью</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <p>Singleton часто критикуют: он превращается в «глобальную переменную» и усложняет тесты. Используй его там, где правда нужен один объект — например, для подключения к базе.</p>
+
+      <h2>Паттерн 2. Factory (Фабрика)</h2>
+
+      <p><strong>Задача:</strong> создавать объекты, не указывая в коде их точный класс. Логика создания — в одном месте.</p>
+
+      <p>Пример: приложение поддерживает разные способы оплаты. В зависимости от выбора пользователя — создаётся нужный объект.</p>
+
+      <h3>Без паттерна — куча условий</h3>
+
+      <pre><code class="language-python">def process_payment(method):
+    if method == 'card':
+        payment = CardPayment()
+        payment.pay()
+    elif method == 'paypal':
+        payment = PaypalPayment()
+        payment.pay()
+    elif method == 'crypto':
+        payment = CryptoPayment()
+        payment.pay()
+    # И так везде, где нужна оплата</code></pre>
+
+      <p>Если добавится новый способ — придётся искать все такие места в коде.</p>
+
+      <h3>С паттерном — единая точка</h3>
+
+      <pre><code class="language-python"># Базовый класс — общий интерфейс
+class Payment:
+    def pay(self, amount):
+        raise NotImplementedError
+
+# Конкретные реализации
+class CardPayment(Payment):
+    def pay(self, amount):
+        return 'Оплата картой: ' + str(amount) + ' руб.'
+
+class PaypalPayment(Payment):
+    def pay(self, amount):
+        return 'Оплата через PayPal: ' + str(amount) + ' руб.'
+
+class CryptoPayment(Payment):
+    def pay(self, amount):
+        return 'Оплата криптой: ' + str(amount) + ' руб.'
+
+# Фабрика — единственное место с логикой выбора
+class PaymentFactory:
+    @staticmethod
+    def create(method):
+        if method == 'card':
+            return CardPayment()
+        elif method == 'paypal':
+            return PaypalPayment()
+        elif method == 'crypto':
+            return CryptoPayment()
+        else:
+            raise ValueError('Неизвестный метод: ' + method)
+
+# Использование
+payment = PaymentFactory.create('card')
+print(payment.pay(1500))</code></pre>
+
+      <p>Теперь добавление нового метода оплаты — это правка <strong>только в одном месте</strong> — в фабрике.</p>
+
+      <h3>Когда использовать</h3>
+
+      <ul>
+        <li>Создание объектов с разной логикой.</li>
+        <li>Выбор класса во время выполнения.</li>
+        <li>Скрыть от пользователя детали создания.</li>
+      </ul>
+
+      <h2>Паттерн 3. Observer (Наблюдатель)</h2>
+
+      <p><strong>Задача:</strong> одни объекты должны узнавать об изменениях других — не будучи жёстко связанными с ними.</p>
+
+      <p>Примеры:</p>
+
+      <ul>
+        <li>Уведомления: изменился заказ — отправить письмо, push, сообщение в чат.</li>
+        <li>UI: изменилась модель — обновились все компоненты.</li>
+        <li>События в браузере: клик, скролл, ввод.</li>
+      </ul>
+
+      <h3>Реализация</h3>
+
+      <pre><code class="language-python">class Publisher:
+    'Издатель — источник событий'
+
+    def __init__(self):
+        # Список подписчиков
+        self._subscribers = []
+
+    def subscribe(self, callback):
+        # Кто-то подписывается на события
+        self._subscribers.append(callback)
+
+    def unsubscribe(self, callback):
+        # Отписка
+        self._subscribers.remove(callback)
+
+    def notify(self, event):
+        # Уведомляем всех подписчиков
+        for callback in self._subscribers:
+            callback(event)
+
+# Создаём издателя
+shop = Publisher()
+
+# Подписчики — обычные функции
+def send_email(event):
+    print('Отправляем email о событии: ' + event)
+
+def send_push(event):
+    print('Отправляем push: ' + event)
+
+def log_event(event):
+    print('Пишем в лог: ' + event)
+
+# Подписываемся
+shop.subscribe(send_email)
+shop.subscribe(send_push)
+shop.subscribe(log_event)
+
+# Произошло событие — все узнают
+shop.notify('Новый заказ #42')</code></pre>
+
+      <p>Издатель не знает, кто на него подписан. Он просто кричит «событие!» — а подписчики реагируют каждый по-своему. Плюс в том, что подписаться можно в любой момент, а издатель об этом узнает автоматически.</p>
+
+      <h3>Observer в браузере</h3>
+
+      <p>Ты используешь его каждый день — это <code>addEventListener</code>:</p>
+
+      <pre><code class="language-javascript">// Кнопка — издатель
+var button = document.querySelector('#buy');
+
+// Подписчики — функции-обработчики
+button.addEventListener('click', function() {
+  console.log('Отправляем заказ');
+});
+
+button.addEventListener('click', function() {
+  console.log('Показываем уведомление');
+});
+
+// Один клик — все подписчики сработают</code></pre>
+
+      <h3>Когда использовать</h3>
+
+      <ul>
+        <li>Событийная модель: одно событие → много реакций.</li>
+        <li>Слабая связанность: объекты не знают друг о друге.</li>
+        <li>Динамические подписки: кто-то может подписаться или отписаться в любой момент.</li>
+      </ul>
+
+      <h2>Три паттерна вместе</h2>
+
+      <p>В реальном проекте они часто комбинируются:</p>
+
+      <ul>
+        <li><strong>Singleton</strong> — единый логгер приложения.</li>
+        <li><strong>Factory</strong> — создание подключений к разным сервисам.</li>
+        <li><strong>Observer</strong> — событийная шина: компоненты публикуют события, другие подписываются.</li>
+      </ul>
+
+      <h2>Другие паттерны — коротко</h2>
+
+      <p>Всего паттернов больше 20. Вот те, о которых стоит знать:</p>
+
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Паттерн</th><th>Зачем</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Adapter</td><td>Превратить один интерфейс в другой</td></tr>
+          <tr><td>Decorator</td><td>Добавить поведение без изменения класса</td></tr>
+          <tr><td>Strategy</td><td>Переключать алгоритмы на лету</td></tr>
+          <tr><td>Repository</td><td>Абстракция над базой данных</td></tr>
+          <tr><td>MVC</td><td>Разделить модель, представление и контроллер</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2>Не увлекайся</h2>
+
+      <blockquote>Есть шутка: «Начинающий программист применяет паттерны везде. Опытный — знает, когда не применять».</blockquote>
+
+      <p>Паттерны нужны там, где они <strong>реально упрощают код</strong>. Если Singleton добавляет сложности, а Factory решает задачу на 5 строк — лучше без них.</p>
+
+      <p>Правило: <strong>сначала пиши простой код, потом замечай повторяющиеся проблемы и применяй подходящий паттерн</strong>. Не наоборот.</p>
+
+      <h2>Итог</h2>
+
+      <p>Singleton — один объект на всю программу. Factory — централизованное создание объектов с выбором класса. Observer — подписка на события, слабая связанность. Все три встречаются в реальном коде постоянно. Изучить их стоит — но применять только тогда, когда это упрощает, а не усложняет.</p>
+    `
   }
 ];
